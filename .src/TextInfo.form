@@ -1,0 +1,12 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,131,107)
+  Text = ("Brian F__K Program Output")
+  { !BFOutput TerminalView
+    MoveScaled(1,0,129,104)
+    #Public = True
+    ToolTip = ("BrianF__K output")
+    ShowScrollBar = True
+  }
+}

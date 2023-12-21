@@ -1,0 +1,207 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,128,61)
+  Text = ("Brian F__K Source Code")
+  { Filemenu Menu
+    Text = ("File")
+    { NewBF Menu
+      Text = ("new")
+    }
+    { SaveBF Menu
+      Text = ("Save")
+    }
+    { SaveAsBF Menu
+      Text = ("Save As")
+    }
+    { LoadProgram Menu
+      Text = ("Load")
+    }
+    { QuitBF Menu
+      Text = ("Quit")
+    }
+  }
+  { Execute Menu
+    Text = ("Execute")
+    { RunBF Menu
+      Text = ("Run")
+    }
+    { StepBF Menu
+      Text = ("Step")
+      Shortcut = "Ctrl+S"
+    }
+    { StopMenu Menu
+      Text = ("Break")
+    }
+    { ResetMenu Menu
+      Text = ("Reset")
+    }
+    { CompileMenu Menu
+      Text = ("Compile")
+    }
+  }
+  { ExamplesMenue Menu
+    Text = ("Examples")
+    { bottlesMenu Menu
+      Text = ("99 Bottles")
+    }
+    { bsortex Menu
+      Text = ("bsort")
+    }
+    { fibex Menu
+      Text = ("fib")
+    }
+    { hanoiex Menu
+      Text = ("hanoi")
+    }
+    { helloex Menu
+      Text = ("hello world")
+    }
+    { lostkingdomex Menu
+      Text = ("Lost Kingdom")
+    }
+    { Mandelbrotex Menu
+      Text = ("Mandelbrot")
+    }
+    { qsortex Menu
+      Text = ("qsort")
+    }
+    { sierpinskiex Menu
+      Text = ("Sierpinski")
+    }
+  }
+  { InfoTab TabStrip
+    MoveScaled(1,6,126,37)
+    Expand = True
+    AutoResize = True
+    Count = 2
+    Index = 0
+    Text = ("Source Code")
+    { !SourceCode TextEditor
+      MoveScaled(0,0,123,79)
+      #Public = True
+      Expand = True
+      ShowPosition = True
+      ShowLineNumber = True
+      ShowModified = True
+      ShowBraces = True
+    }
+    Index = 1
+    Text = ("Compiled code")
+    { !CompiledInst GridView
+      MoveScaled(1,0,101,25)
+      #Public = True
+      Mode = Select.Single
+    }
+    { JumpTable GridView
+      MoveScaled(103,0,23,25)
+      Header = GridView.Horizontal
+      ScrollBar = Scroll.Vertical
+      Sorted = True
+    }
+    { Buttons Panel
+      MoveScaled(1,26,60,6)
+      Background = Color.SoftRoyal
+      { StopButton Button
+        MoveScaled(1,1,12,4)
+        Text = ("Break")
+      }
+      { StepButton Button
+        MoveScaled(14,1,12,4)
+        Text = ("Step")
+      }
+      { ResetButton Button
+        MoveScaled(46,1,12,4)
+        Text = ("Reset")
+      }
+      { RunButton Button
+        MoveScaled(27,1,12,4)
+        Text = ("Run")
+      }
+    }
+    { RegInfo Panel
+      MoveScaled(64,26,61,6)
+      { Label1 Label
+        MoveScaled(2,1,4,4)
+        Text = ("PC")
+      }
+      { Label2 Label
+        MoveScaled(19,1,5,4)
+        Text = ("Cell ")
+      }
+      { !TextCell TextBox
+        MoveScaled(25,1,11,4)
+        #Public = True
+        Alignment = Align.Right
+        ReadOnly = True
+      }
+      { !TextPC TextBox
+        MoveScaled(7,1,11,4)
+        #Public = True
+        Alignment = Align.Right
+        ReadOnly = True
+      }
+      { Label3 Label
+        MoveScaled(37,1,7,4)
+        Text = ("Inst Cnt")
+      }
+      { TotalInstructions TextBox
+        MoveScaled(45,1,15,4)
+        Alignment = Align.Right
+        ReadOnly = True
+      }
+    }
+    Index = 0
+  }
+  { ToolBar1 ToolBar
+    MoveScaled(0,0,85,5)
+    { CompileTool ToolButton
+      MoveScaled(2,0,20,5)
+      Text = ("Compile Source")
+      Picture = Picture["icon:/medium/file"]
+    }
+    { SingleStepTool ToolButton
+      MoveScaled(27,0,16,5)
+      Text = ("Single Step")
+      Picture = Picture["icon:/medium/tab"]
+    }
+    { StopTool ToolButton
+      MoveScaled(44,0,13,5)
+      Text = ("Break")
+      Picture = Picture["icon:/medium/stop"]
+    }
+    { ToolButton4 ToolButton
+      MoveScaled(57,0,10,5)
+      Text = ("Run")
+      Picture = Picture["icon:/medium/play"]
+    }
+    { ResetTool ToolButton
+      MoveScaled(67,0,10,5)
+      Text = ("Reset")
+      Picture = Picture["icon:/medium/refresh"]
+    }
+  }
+  { Panel3 Panel
+    MoveScaled(85,0,37,5)
+    { TraceRadio RadioButton
+      MoveScaled(13,1,11,3)
+      Text = ("Trace on")
+    }
+    { traceoffRadio RadioButton
+      MoveScaled(24,1,12,3)
+      Text = ("Trace Off")
+      Value = True
+    }
+    { !RunningMsg TextLabel
+      MoveScaled(1,1,12,3)
+      #Public = True
+      Text = ("Halted")
+      Alignment = Align.Center
+    }
+  }
+  { !Spinner1 Spinner
+    MoveScaled(59,47,8,8)
+    #Public = True
+    Type = Spinner.Circle
+  }
+}

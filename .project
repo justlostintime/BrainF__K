@@ -1,0 +1,20 @@
+# Gambas Project File 3.0
+Startup=FMain
+Version=0.0.1
+Component=gb.image
+Component=gb.gui
+Component=gb.form
+Component=gb.form.dialog
+Component=gb.util
+Component=gb.pcre
+Component=gb.highlight
+Component=gb.form.editor
+Component=gb.settings
+Component=gb.form.mdi
+Component=gb.form.print
+Component=gb.form.stock
+Component=gb.term
+Component=gb.form.terminal
+TabSize=6
+Language=en_US
+Packager=1
