@@ -468,3 +468,21 @@ Public Sub CompiledInst_Data(Row As Integer, Column As Integer)
       CompiledInst.Data.text = $cpu.operators[$cpu.Program[element]]
 
 End
+
+Public Sub calpiex_Click()
+
+      LoadExample("CalcPi.bf")
+
+End
+
+Public Sub dbf2cex_Click()
+
+      LoadExample("dbf2c.bf")
+
+End
+
+Public Sub Calcex_Click()
+
+      LoadExample("Calculator.bf")
+
+End

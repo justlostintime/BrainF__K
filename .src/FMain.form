@@ -69,6 +69,15 @@
     { sierpinskiex Menu
       Text = ("Sierpinski")
     }
+    { calpiex Menu
+      Text = ("Calculate Pi")
+    }
+    { dbf2cex Menu
+      Text = ("BF to C")
+    }
+    { Calcex Menu
+      Text = ("Calculator")
+    }
   }
   { InfoTab TabStrip
     MoveScaled(1,6,126,37)
