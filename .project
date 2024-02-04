@@ -1,6 +1,7 @@
 # Gambas Project File 3.0
+Title=Brain F__K
 Startup=FMain
-Version=0.0.1
+Version=1.1.1
 Component=gb.image
 Component=gb.gui
 Component=gb.form
@@ -15,6 +16,13 @@ Component=gb.form.print
 Component=gb.form.stock
 Component=gb.term
 Component=gb.form.terminal
+Description="An implementation and examples of the very simple Brain F__K interpreter\nIncludes Examples of \nCalc pi, calculator, mandelbrot, fib, etc all written in BF"
+Authors="Justlostintime"
 TabSize=6
 Language=en_US
+Vendor=Westwood
 Packager=1
+Tags=Amusement,Development,Emulator,Example,IDE
+GambasVersion=3.18
+WebSite=https://github.com/justlostintime/BrainF__K
+CreateMenu=1

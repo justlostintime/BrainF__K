@@ -5,6 +5,8 @@ Property Read CurrentFile As String Use $CurrentFile = ""
 Property DisplayColumnsWidth As Integer Use $DisplayColumnWidth = 20
 Private HighlightColor As Integer = Color.LightBackground
 
+Property CompileLanguage As Integer Use $CompileLanguage = JitBinary.Gambas_Code
+
 Private OldSelectedRow As Integer = 0
 Private OldSelectedCol As Integer = 0
 Private OldBG As Integer = 0
@@ -29,6 +31,8 @@ Public Sub thetimer_Timer()
 
 End
 
+Property Title As String Use $title = "Brian Fuck Interpreter/Compiler , Target = &1"
+
 Public Sub Form_Open()
 
       System.IgnoreOverflow = True
@@ -50,6 +54,8 @@ Public Sub Form_Open()
       JumpTable.Columns.count = 2
       JumpTable.Columns.width = JumpTable.w \ 2
       JumpTable.Rows.count = 10
+
+      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
 
 End
 
@@ -143,10 +149,16 @@ Public Sub NewBF_Click()
 
       SourceCode.Clear()
       $CurrentFile = ""
+
       If $cpu Then
             $cpu.cpuTimer.Stop()
             $cpu = Null
       Endif
+
+      InfoTab[0].text = "New"
+      JitBinary.NewSource = ""
+      JitPcodeOut.Clear()
+      LanguageListing.Clear()
       CompiledInst.Clear()
       JumpTable.Clear()
 
@@ -205,6 +217,8 @@ Public Sub CompileMenu_Click()
             SetProgramDisplay()
             setActiveEntry()
             InfoTab.Index = 1
+            JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
+            LanguageListing.text = $cpu.Jit_Binary
       Endif
       Spinner1.Stop()
       Spinner1.Hide()
@@ -437,8 +451,15 @@ Public Sub Form_Resize()
 
       InfoTab.w = Me.w - 8
       InfoTab.h = (Me.h - 30) - InfoTab.top
+
       SourceCode.h = InfoTab.H - 35
       SourceCode.w = infotab.w - 10
+
+      JitPcodeOut.h = InfoTab.H - 35
+      JitPcodeOut.w = InfoTab.w - 10
+
+      LanguageListing.h = InfoTab.H - 35
+      LanguageListing.w = InfoTab.w - 10
 
       Buttons.top = InfoTab.h - Buttons.h - 50
       RegInfo.left = InfoTab.w - RegInfo.w - 4
@@ -484,5 +505,34 @@ End
 Public Sub Calcex_Click()
 
       LoadExample("Calculator.bf")
+
+End
+
+Public Sub MenuCompGambas_Click()
+
+      $CompileLanguage = JitBinary.Gambas_Code
+      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+
+End
+
+Public Sub MenuCompC_Click()
+
+      $CompileLanguage = JitBinary.C_Code
+      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+
+End
+
+Public Sub MenuCompFasm_Click()
+
+      $CompileLanguage = JitBinary.X86_asm_code
+      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+
+End
+
+Public Sub ExecuteBinButton_Click()
+
+      If $cpu And If $cpu.Jit_Binary And If $cpu.Jit_Binary <> "" Then
+            JitBinary.Execute()
+      Endif
 
 End

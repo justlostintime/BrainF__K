@@ -16,6 +16,8 @@ Property inputbuffer As Byte[] Use $inputBuffer
 Property running As Boolean Use $running
 Property InstCnt As Long Use $InstCnt
 Property Trace As Boolean Use $Trace
+Property Jit_Pcode As JitPcodeInst[] Use $Jit_Pcode
+Property Jit_Binary As String Use $Jit_Binary
 
 Const MoveLeft As Byte = 0                             ' Move the cell pointer to the left
 Const MoveRight As Byte = 1                           ' Move the cell point to the right
@@ -48,6 +50,7 @@ Public Sub _call()
 
       Dim jumpto As Integer
 
+      Obtain_keypress()
       $running = True
 
       While True
@@ -86,6 +89,7 @@ Public Sub _call()
       Wend
 
       $running = False
+      Release_keypress()
 
       Return
 
@@ -164,6 +168,9 @@ RDR:
       $Cells[$cell] = $inputBuffer.Pop()
       Return
 
+Exitcpu:
+      Release_keypress()
+
 End
 
 Public Sub ResetMachine()
@@ -190,8 +197,6 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
       cpuTimer.Delay = 0.1
       cpuTimer.Start()
 
-      Object.Attach(TextInfo.bfoutput, Me, "terminal")
-
       $MaxCell = MaxCellCount
 
       If readfrom.len > 0 Then
@@ -203,6 +208,8 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
       WriteDest = writeto
       WriteDest.print("\e[2J\e[0mBrain F__K execution results\n\r")
       $compiled = CompileProgram(Source)
+      $jit_Pcode = JitPcode(compiledSource)
+      $jit_Binary = JitBinary($jit_Pcode, FMain.CompileLanguage)
 
 End
 
@@ -283,6 +290,18 @@ End
 Sub CompileError(text As String, lineno As Integer, textpos As Integer)
 
       WriteDest.print("Compile Error at &1:&2 " & text, lineno, textpos)
+
+End
+
+Public Sub release_keypress()
+
+      Object.Detach(TextInfo.BFOutput)
+
+End
+
+Public Sub Obtain_keypress()
+
+      Object.Attach(TextInfo.bfoutput, Me, "terminal")
 
 End
 

@@ -1,0 +1,7 @@
+// C compiler Preamble
+#include <stdio.h>
+int main() {
+int dp = 0;                      // pointer to current location in storage
+unsigned char storage[1000000];  // about a meg of storage
+int i = 0;                        // counter used in multi char outputs
+printf("Begin Binary execution C code source\n");

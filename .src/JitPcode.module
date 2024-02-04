@@ -1,0 +1,92 @@
+' Gambas module file
+
+Private Source_Pointer As Integer = 0
+Private pcode As JitPcodeInst[]
+Private $ifZero As Integer[]
+Private $ifNotZero As Integer[]
+Private $stack As Integer[]
+
+Public Sub _call(source As Byte[]) As JitPcodeInst[]
+
+      Source_Pointer = 0
+      pcode = New JitPcodeInst[]
+      $ifZero = New Integer[]
+      $ifNotZero = New Integer[]
+      $stack = New Integer[]
+
+      With JitPcodeInst
+            While Source_Pointer < source.count
+
+                  Dim inst As Byte = source[Source_Pointer]
+                  Dim operand As Pointer = 0
+                  Select Case inst
+                        Case .pcode_dec, .pcode_inc, .pcode_left, .pcode_right, .pcode_input, .pcode_output                               '"+", "-", ">", "<", ",", "."
+                              Operand = lex(source, ByRef Source_Pointer)
+
+                        Case .pcode_ifzero                                                                   '  "["
+                              Operand = 0
+                              $stack.Push(Pcode.count)
+                              Inc Source_Pointer
+
+                        Case .pcode_ifNotZero                                                             '  "]"
+                              Operand = 0
+                              Dim return_addr As Integer = $stack.Pop()
+                              $ifZero.Add(return_addr, 0)
+                              $ifNotZero.Add(Pcode.count, 0)                            ' push these from the top down in end they should equal
+                              Inc Source_Pointer
+
+                  End Select
+
+                  Dim pinst As New JitPcodeInst(inst, Operand)
+                  pcode.Add(pinst)
+
+            Wend
+
+      End With
+      FixupJumps()
+      Return Pcode
+
+End
+
+Sub FixupJumps()
+
+      For i As Integer = 0 To $IfZero.Max
+            pcode[$ifZero[i]].Operand = $ifNotZero[i]
+            pcode[$ifZero[i]].JumpDest = $ifZero[i]
+            pcode[$ifNotZero[i]].operand = $ifZero[i]
+            pcode[$ifNotZero[i]].JumpDest = $ifNotZero[i]
+      Next
+
+End
+
+Sub lex(Source As Byte[], ByRef ptr As Integer) As Pointer
+
+      Dim counter As Pointer = 1
+
+      Dim current_oper As Byte = Source[ptr]
+
+      Inc ptr
+      While ptr < source.count
+            If Source[ptr] <> current_oper Then Break
+            Inc ptr
+            Inc counter
+      Wend
+
+      Return counter
+
+End
+
+Public Sub _print(Optional PcodePrg As JitPcodeInst[] = pcode) As String
+
+      Dim report As String = ""
+
+      report &= "Pcode Listing, Entries " & PcodePrg.count & "\n"
+      Report &= "Index        Instruction                        Operand\n"
+      Dim counter As Integer = 0
+      For Each p As JitPcodeInst In PcodePrg
+            report &= Format(counter, "####0") & "               " & p._print() & "\n"
+            Inc counter
+      Next
+      Return report
+
+End

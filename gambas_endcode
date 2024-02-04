@@ -1,0 +1,14 @@
+ '**********************************
+ t.icanon = true
+ file.in.term.setattr(1,t)
+ catch
+   error error.text;;error.where
+ end
+
+ sub readchar() as byte
+     dim char as integer
+     char = getchar()
+     if char = 13 or if char = 10 then char = 0
+   '  print " read ";char
+     return cbyte(char)
+ end

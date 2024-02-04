@@ -79,11 +79,23 @@
       Text = ("Calculator")
     }
   }
+  { LanguageMenu Menu
+    Text = ("Compile Language")
+    { MenuCompGambas Menu
+      Text = ("Gambas")
+    }
+    { MenuCompC Menu
+      Text = ("C")
+    }
+    { MenuCompFasm Menu
+      Text = ("X86 Assembler")
+    }
+  }
   { InfoTab TabStrip
     MoveScaled(1,6,126,37)
     Expand = True
     AutoResize = True
-    Count = 2
+    Count = 4
     Index = 0
     Text = ("Source Code")
     { !SourceCode TextEditor
@@ -96,7 +108,7 @@
       ShowBraces = True
     }
     Index = 1
-    Text = ("Compiled code")
+    Text = ("Interpreted Code")
     { !CompiledInst GridView
       MoveScaled(1,0,101,25)
       #Public = True
@@ -160,32 +172,45 @@
         ReadOnly = True
       }
     }
+    Index = 2
+    Text = ("JIT Pcode")
+    { JitPcodeOut TextArea
+      MoveScaled(1,0,121,32)
+      Font = Font["Ubuntu Mono"]
+    }
+    Index = 3
+    Text = ("Language Source Code")
+    { !LanguageListing TextArea
+      MoveScaled(1,1,109,30)
+      #Public = True
+      ReadOnly = True
+    }
     Index = 0
   }
   { ToolBar1 ToolBar
-    MoveScaled(0,0,85,5)
+    MoveScaled(0,0,71,5)
     { CompileTool ToolButton
-      MoveScaled(2,0,20,5)
+      MoveScaled(2,0,19,5)
       Text = ("Compile Source")
       Picture = Picture["icon:/medium/file"]
     }
     { SingleStepTool ToolButton
-      MoveScaled(27,0,16,5)
+      MoveScaled(23,0,16,5)
       Text = ("Single Step")
       Picture = Picture["icon:/medium/tab"]
     }
     { StopTool ToolButton
-      MoveScaled(44,0,13,5)
+      MoveScaled(40,0,10,5)
       Text = ("Break")
       Picture = Picture["icon:/medium/stop"]
     }
     { ToolButton4 ToolButton
-      MoveScaled(57,0,10,5)
+      MoveScaled(50,0,10,5)
       Text = ("Run")
       Picture = Picture["icon:/medium/play"]
     }
     { ResetTool ToolButton
-      MoveScaled(67,0,10,5)
+      MoveScaled(60,0,10,5)
       Text = ("Reset")
       Picture = Picture["icon:/medium/refresh"]
     }
@@ -212,5 +237,13 @@
     MoveScaled(59,47,8,8)
     #Public = True
     Type = Spinner.Circle
+  }
+  { ExecutePanel Panel
+    MoveScaled(72,0,12,5)
+    { ExecuteBinButton Button
+      MoveScaled(1,0,10,5)
+      ToolTip = ("Execute the compiled\nSource Generated")
+      Text = ("Execute")
+    }
   }
 }
