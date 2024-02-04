@@ -5,15 +5,15 @@ Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode
 Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ    [ ", "BNZ   ] ", "Output .", "Input  ,"]
 
 Public Languages As String[][] = [
-      ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "if Storage[dp] = 0 then goto lab&1\nlab&2:\n",
-      "if Storage[dp] <> 0 then goto lab&1\nlab&2:\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n"],
+      ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "while  Storage[dp] >  0\n",
+      "wend\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n"],
       ["dp -= &1;\n", "dp += &1;\n", "storage[dp] += &1;\n", "storage[dp] -= &1;\n", "if (storage[dp] == 0) goto lab&1;\nlab&2:\n",
       "if (storage[dp] != 0) goto lab&1;\nlab&2:\n", "for (i=0;  i <  &1; i++) putchar((int)storage[dp]);\n", "storage[dp] = (unsigned char)getchar();\n"],
       []
 ]
 Public LanguagesSingle As String[][] = [
-      ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "if Storage[dp] = 0 then goto lab&1\nlab&2:\n",
-      "if Storage[dp] <> 0 then goto lab&1\nlab&2:\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n"],
+      ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
+      "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n"],
       ["dp--;\n", "dp++;\n", "storage[dp]++;\n", "storage[dp]--;\n", "if (storage[dp] == 0) goto lab&1;\nlab&2:\n",
       "if (storage[dp] != 0) goto lab&1;\nlab&2:\n", "putchar((int)storage[dp]);\n", "storage[dp] = (unsigned char)getchar();\n"],
       []

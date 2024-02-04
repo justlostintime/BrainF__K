@@ -8,7 +8,9 @@
  Public Sub Main()
     System.ignoreoverflow=true
     Dim i as integer = 0
+    print "Begin Script execution Gambas source code"
     dim t as variant = file.in.term.getattr()
     t.icanon = false
     file.in.term.setattr(1,t)
 '********************************************
+

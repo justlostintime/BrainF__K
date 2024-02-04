@@ -1,6 +1,7 @@
  '**********************************
  t.icanon = true
  file.in.term.setattr(1,t)
+ print "End of Script Execution Gambas source code"
  catch
    error error.text;;error.where
  end

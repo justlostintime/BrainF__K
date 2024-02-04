@@ -55,8 +55,6 @@ End
 
 Public Sub Execute(Optional genLanguage As Integer = CompileType)
 
-      Dim report As String = ""
-
       If genLanguage = gambas_code Then
             TextInfo.BFOutput.Exec([SourceFile])
       Else

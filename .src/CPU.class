@@ -64,7 +64,7 @@ Public Sub _call()
             Endif
 
             If $break Then
-                  WriteDest.print(Subst("\n\rBreak as  &1 cell &2\n\r", $pc, $Cell))
+                  WriteDest.print(Subst("\n\rBreak at  &1 cell &2\n\r", $pc, $Cell))
                   $break = False
                   Break
             Endif
