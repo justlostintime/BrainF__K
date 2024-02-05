@@ -1,0 +1,80 @@
+' Gambas class file
+
+' Static Public Gambas_Code As Integer = 0
+' Static Public C_code As Integer = 1
+' Static Public X86_asm_code As Integer = 2
+
+Static Public CodeNames As String[]
+Static Public FileExtension As String[]
+Static Public ObjExtension As String[]
+Static Public Preamble As String[]
+Static Public ClosingCode As String[]
+Static Public BuildCmd As String[][]
+
+Public CompileType As Integer
+Public NewSource As String
+Public SourceFIle As String
+Public BinaryFile As String
+
+Static Public Sub Myinit()
+
+      Print "Configuring JitCompiler"
+      CodeNames = ["Gambas Script", "C Source", "X86 Assembler"]
+      FileExtension = [".gbs", ".c", ".asm"]
+      ObjExtension = [".gbs", ".cbn", ".run"]
+      Preamble = ["Read File gambas", "Read File c", "main: ; Fasm Preamble\n"]
+      ClosingCode = ["Read File gambas", "Read File c", ""]
+      BuildCmd = [["chmod 755  &1"], ["gcc  -o &2 &1"], [" fasm &1  &2", "chmod 755 &2"]]
+
+      Preamble[0] = File.Load("gambas_preamble")
+      ClosingCode[0] = File.Load("gambas_endcode")
+      Preamble[1] = File.Load("c_preamble")
+      ClosingCode[1] = File.Load("c_endcode")
+      Preamble[2] = File.Load("fasm_preamble")
+      ClosingCode[2] = File.Load("fasm_endcode")
+
+End
+
+Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
+
+      SourceFIle = Temp("gcode")
+      BinaryFile = Temp("bfbinary")
+
+      NewSource = Preamble[genLanguage]
+
+      For Each p As JitPcodeInst In mpcode
+            NewSource &= p.gencode(genLanguage)
+      Next
+
+      NewSource &= ClosingCode[genLanguage]
+
+      SourceFile = File.setext(SourceFile, FileExtension[genLanguage])
+      BinaryFile = File.SetExt(BinaryFile, ObjExtension[genLanguage])
+
+      File.Save(SourceFile, NewSource)
+
+      Dim Makeit As String[] = BuildCmd[genLanguage]
+      For Each mitem As String In Makeit
+            Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile), " ", "\"", True, True)
+            If buildit.count > 0 Then
+                  Exec buildit Wait
+                  If Process.LastValue <> 0 Then
+                        Message.Error("Build failed for :" & Quote(SourceFIle))
+                        Break
+                  Endif
+            Endif
+      Next
+
+      CompileType = genLanguage
+
+End
+
+Public Sub Execute(Optional genLanguage As Integer = CompileType)
+
+      If genLanguage = 0 Then
+            TextInfo.BFOutput.Exec([SourceFile])
+      Else
+            TextInfo.BFOutput.Exec([BinaryFile])
+      Endif
+
+End

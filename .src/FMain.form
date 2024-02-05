@@ -79,23 +79,11 @@
       Text = ("Calculator")
     }
   }
-  { LanguageMenu Menu
-    Text = ("Compile Language")
-    { MenuCompGambas Menu
-      Text = ("Gambas")
-    }
-    { MenuCompC Menu
-      Text = ("C")
-    }
-    { MenuCompFasm Menu
-      Text = ("X86 Assembler")
-    }
-  }
   { InfoTab TabStrip
     MoveScaled(1,6,126,37)
     Expand = True
     AutoResize = True
-    Count = 4
+    Count = 6
     Index = 0
     Text = ("Source Code")
     { !SourceCode TextEditor
@@ -179,16 +167,51 @@
       Font = Font["Ubuntu Mono"]
     }
     Index = 3
-    Text = ("Language Source Code")
-    { !LanguageListing TextArea
-      MoveScaled(1,1,109,30)
+    Text = ("Gambas Script")
+    { !GambasListing TextArea
+      MoveScaled(1,5,109,26)
+      #Public = True
+      ReadOnly = True
+    }
+    { gambaspanel Panel
+      MoveScaled(1,0,120,5)
+      { runGambas Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+    }
+    Index = 4
+    Text = ("C Source")
+    { cpanel Panel
+      MoveScaled(0,0,120,5)
+      { runCBin Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+    }
+    { !CListing TextArea
+      MoveScaled(0,5,109,26)
+      #Public = True
+      ReadOnly = True
+    }
+    Index = 5
+    Text = ("x64 Asm")
+    { asmpanel Panel
+      MoveScaled(0,0,120,5)
+      { runAsmBin Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+    }
+    { !AsmListing TextArea
+      MoveScaled(0,5,109,26)
       #Public = True
       ReadOnly = True
     }
     Index = 0
   }
   { ToolBar1 ToolBar
-    MoveScaled(0,0,71,5)
+    MoveScaled(0,0,84,5)
     { CompileTool ToolButton
       MoveScaled(2,0,19,5)
       Text = ("Compile Source")
@@ -237,13 +260,5 @@
     MoveScaled(59,47,8,8)
     #Public = True
     Type = Spinner.Circle
-  }
-  { ExecutePanel Panel
-    MoveScaled(72,0,12,5)
-    { ExecuteBinButton Button
-      MoveScaled(1,0,10,5)
-      ToolTip = ("Execute the compiled\nSource Generated")
-      Text = ("Execute")
-    }
   }
 }

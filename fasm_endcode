@@ -1,0 +1,50 @@
+
+;******************************************************
+    lea  rdi, [msge]                              ; address of msg goes into rdi
+    mov  rax, msgelen                             ; put length of msg into rax
+    mov  rdx, rax                                 ; move rax to rdx
+    mov  rsi, rdi                                 ; move rdi to rsi
+    mov  rdi, 1                                   ; stdout
+    mov  rax, 1                                   ; sys_write
+    syscall
+    xor  rdi, rdi                                 ; exit code 0
+    mov  rax, 60                                  ; sys_exit
+    syscall
+    
+    
+putchars:                                         ; repeat the print of a cell value ax = the counter
+    cmp   ax,0                                    ; if it is zero we are done
+    je    PutcharsExit
+    dec   ax                                      ; reduce the count
+    push  ax
+    call  putchar
+    pop   ax
+    jmp   putchars
+    
+PutcharsExit:
+    ret
+    
+putchar:
+    mov  al,byte [rdi]                            ; get the byte to write
+    mov  byte [buffer],al                         ; save the byte to the buffer
+    push rdi                                      ; save the pointer to the storage
+    lea  rsi,[buffer]                             ; address of the byte
+    mov  rdx,1                                    ; just print 1 byte
+    mov  rdi,1                                    ; std out
+    mov  rax,1                                    ; sys_write
+    syscall                                       ; int 80 syscall
+    pop  rdi                                      ; restore the pointer
+    ret
+
+getchar:
+    ret
+
+
+    segment readable writable
+
+msg   db 'Start Fasm execution binary from Source code', 10, 0
+msglen = $ - msg - 1
+msge  db 'End Fasm execution binary from Source code', 10, 0
+msgelen = $ - msge - 1
+buffer  db 256   dup(0)
+storage db 30000 dup(0)

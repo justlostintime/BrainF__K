@@ -17,7 +17,10 @@ Property running As Boolean Use $running
 Property InstCnt As Long Use $InstCnt
 Property Trace As Boolean Use $Trace
 Property Jit_Pcode As JitPcodeInst[] Use $Jit_Pcode
-Property Jit_Binary As String Use $Jit_Binary
+
+Property Jit_Gambas_Binary As JitCompiler Use $Jit_Gambas_Binary
+Property Jit_C_Binary As JitCompiler Use $Jit_C_Binary
+Property Jit_asm_binary As JitCompiler Use $Jit_Asm_Binary
 
 Const MoveLeft As Byte = 0                             ' Move the cell pointer to the left
 Const MoveRight As Byte = 1                           ' Move the cell point to the right
@@ -207,9 +210,12 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
 
       WriteDest = writeto
       WriteDest.print("\e[2J\e[0mBrain F__K execution results\n\r")
+
       $compiled = CompileProgram(Source)
       $jit_Pcode = JitPcode(compiledSource)
-      $jit_Binary = JitBinary($jit_Pcode, FMain.CompileLanguage)
+      $jit_gambas_Binary = New JitCompiler($jit_Pcode, 0)
+      $jit_c_Binary = New JitCompiler($jit_Pcode, 1)
+      $jit_asm_Binary = New JitCompiler($jit_Pcode, 2)
 
 End
 

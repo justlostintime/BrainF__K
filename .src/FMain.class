@@ -5,7 +5,7 @@ Property Read CurrentFile As String Use $CurrentFile = ""
 Property DisplayColumnsWidth As Integer Use $DisplayColumnWidth = 20
 Private HighlightColor As Integer = Color.LightBackground
 
-Property CompileLanguage As Integer Use $CompileLanguage = JitBinary.Gambas_Code
+Property CompileLanguage As Integer Use $CompileLanguage = 0
 
 Private OldSelectedRow As Integer = 0
 Private OldSelectedCol As Integer = 0
@@ -31,7 +31,7 @@ Public Sub thetimer_Timer()
 
 End
 
-Property Title As String Use $title = "Brian Fuck Interpreter/Compiler , Target = &1"
+Property Title As String Use $title = "Brian Fuck Interpreter/Compiler  Gambas/C/x64asm"
 
 Public Sub Form_Open()
 
@@ -55,7 +55,8 @@ Public Sub Form_Open()
       JumpTable.Columns.width = JumpTable.w \ 2
       JumpTable.Rows.count = 10
 
-      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+      FMain.text = $title
+      JitCompiler.Myinit()
 
 End
 
@@ -156,9 +157,13 @@ Public Sub NewBF_Click()
       Endif
 
       InfoTab[0].text = "New"
-      JitBinary.NewSource = ""
+      If $cpu And If $cpu.Jit_gambas_Binary Then $cpu.Jit_gambas_Binary.NewSource = ""
+      If $cpu And If $cpu.Jit_c_Binary Then $cpu.Jit_C_Binary.NewSource = ""
+      If $cpu And If $cpu.Jit_asm_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
       JitPcodeOut.Clear()
-      LanguageListing.Clear()
+      GambasListing.Clear()
+      CListing.Clear()
+      AsmListing.Clear()
       CompiledInst.Clear()
       JumpTable.Clear()
 
@@ -218,7 +223,9 @@ Public Sub CompileMenu_Click()
             setActiveEntry()
             InfoTab.Index = 1
             JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
-            LanguageListing.text = $cpu.Jit_Binary
+            GambasListing.text = $cpu.Jit_gambas_Binary.NewSource
+            CListing.text = $cpu.Jit_C_Binary.NewSource
+            AsmListing.text = $cpu.Jit_Asm_Binary.NewSource
       Endif
       Spinner1.Stop()
       Spinner1.Hide()
@@ -458,8 +465,12 @@ Public Sub Form_Resize()
       JitPcodeOut.h = InfoTab.H - 35
       JitPcodeOut.w = InfoTab.w - 10
 
-      LanguageListing.h = InfoTab.H - 35
-      LanguageListing.w = InfoTab.w - 10
+      GambasListing.h = InfoTab.H - 35 - gambaspanel.h
+      GambasListing.w = InfoTab.w - 10
+      CListing.h = InfoTab.H - 35 - cpanel.h
+      CListing.w = InfoTab.w - 10
+      AsmListing.h = InfoTab.H - 35 - asmpanel.h
+      AsmListing.w = InfoTab.w - 10
 
       Buttons.top = InfoTab.h - Buttons.h - 50
       RegInfo.left = InfoTab.w - RegInfo.w - 4
@@ -508,31 +519,26 @@ Public Sub Calcex_Click()
 
 End
 
-Public Sub MenuCompGambas_Click()
+Public Sub runGambas_Click()
 
-      $CompileLanguage = JitBinary.Gambas_Code
-      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
-
-End
-
-Public Sub MenuCompC_Click()
-
-      $CompileLanguage = JitBinary.C_Code
-      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+      If $cpu And If $cpu.Jit_gambas_Binary And If $cpu.Jit_Gambas_Binary.NewSource <> "" Then
+            $cpu.Jit_Gambas_Binary.Execute()
+      Endif
 
 End
 
-Public Sub MenuCompFasm_Click()
+Public Sub runCBin_Click()
 
-      $CompileLanguage = JitBinary.X86_asm_code
-      FMain.text = Subst($title, JitBinary.CodeNames[$CompileLanguage])
+      If $cpu And If $cpu.Jit_C_Binary And If $cpu.Jit_C_Binary.NewSource <> "" Then
+            $cpu.Jit_C_Binary.Execute()
+      Endif
 
 End
 
-Public Sub ExecuteBinButton_Click()
+Public Sub runAsmBin_Click()
 
-      If $cpu And If $cpu.Jit_Binary And If $cpu.Jit_Binary <> "" Then
-            JitBinary.Execute()
+      If $cpu And If $cpu.Jit_asm_Binary And If $cpu.Jit_ASM_Binary.NewSource <> "" Then
+            $cpu.Jit_asm_Binary.Execute()
       Endif
 
 End
