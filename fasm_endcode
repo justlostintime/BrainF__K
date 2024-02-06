@@ -10,8 +10,7 @@
     xor  rdi, rdi                                 ; exit code 0
     mov  rax, 60                                  ; sys_exit
     syscall
-    
-    
+
 putchars:                                         ; repeat the print of a cell value ax = the counter
     cmp   ax,0                                    ; if it is zero we are done
     je    PutcharsExit
@@ -20,10 +19,10 @@ putchars:                                         ; repeat the print of a cell v
     call  putchar
     pop   ax
     jmp   putchars
-    
+
 PutcharsExit:
     ret
-    
+
 putchar:
     mov  al,byte [rdi]                            ; get the byte to write
     mov  byte [buffer],al                         ; save the byte to the buffer
@@ -33,12 +32,27 @@ putchar:
     mov  rdi,1                                    ; std out
     mov  rax,1                                    ; sys_write
     syscall                                       ; int 80 syscall
-    pop  rdi                                      ; restore the pointer
+    pop  rdi                                      ; restore the storage pointer
     ret
 
 getchar:
+    push rdi                                      ; save the storage pointer
+    lea rsi,[buffer]                              ; buffer to store the data
+    mov rdx,1                                     ; Length of the buffer
+    mov rdi,0                                     ; Stdin
+    mov rax,0                                     ; sys read 
+    syscall                                       ; get the character
+    mov al,byte [buffer]                          ; get the input character
+    cmp al,13                                     ; check if input is 13 or 10 must become 0 \n or \r
+    jz  getset0
+    cmp al,10
+    jnz getnoset0
+getset0:
+    mov al,0
+getnoset0:
+    pop rdi                                       ; restore the storage pointer
+    mov [rdi], al                                ; place the byte into storage
     ret
-
 
     segment readable writable
 

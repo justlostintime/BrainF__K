@@ -7,19 +7,22 @@ Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ 
 Public Languages As String[][] = [
       ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "while  Storage[dp] >  0\n",
       "wend\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n"],
-      ["dp -= &1;\n", "dp += &1;\n", "storage[dp] += &1;\n", "storage[dp] -= &1;\n", "while (storage[dp] > 0) {\n",
-      "}\n", "for (i=0;  i <  &1; i++) putchar((int)storage[dp]);\n", "storage[dp] = (unsigned char)getchar();\n"],
+      ["dp -= &1;\n", "dp += &1;\n", "*dp += &1;\n", "*dp -= &1;\n", "while (*dp > 0) {\n",
+      "}\n", "for (i=0;  i <  &1; i++) putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n"],
       ["    sub rdi,&1\n", "    add rdi,&1\n", "    add byte [rdi],&1\n", "    sub byte [rdi],&1\n",
-      "    cmp byte [rdi],0\n    jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n    jnz lab&1\nlab&2:\n", "    mov ax,&1\n    call putchars\n", "    nop\n"]
-
+      "    cmp byte [rdi],0\n    jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n    jnz lab&1\nlab&2:\n", "    mov ax,&1\n    call putchars\n", "    call getchar\n"],
+      ["dp -= &1\n", "dp += &1\n", "storage[dp] += &1\n", "storage[dp] -= &1\n", "while storage[dp] > 0:\n",
+      "\n", "putchars(storage[dp],&1)\n", "print('nop',end='')\n"]
 ]
 Public LanguagesSingle As String[][] = [
       ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
       "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n"],
-      ["dp--;\n", "dp++;\n", "storage[dp]++;\n", "storage[dp]--;\n", "while (storage[dp] >  0) {\n",
-      "}\n", "putchar((int)storage[dp]);\n", "storage[dp] = (unsigned char)getchar();\n"],
+      ["dp--;\n", "dp++;\n", "(*dp)++;\n", "(*dp)--;\n", "while (*dp >  0) {\n",
+      "}\n", "putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n"],
       ["    dec rdi\n", "    inc rdi\n", "    inc byte [rdi]\n", "    dec byte [rdi]\n",
-      "    cmp byte [rdi],0\n    jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n    jnz lab&1\nlab&2:\n", "    call putchar\n", "    nop\n"]
+      "    cmp byte [rdi],0\n    jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n    jnz lab&1\nlab&2:\n", "    call putchar\n", "    call getchar\n"],
+      ["dp -=  1\n", "dp += 1\n", "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n", "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n", "while storage[dp] > 0:\n",
+      "\n", "print(chr(storage[dp]),end='')\n", "print('nop',end='')\n"]
 ]
 
 Public Instruction As Byte

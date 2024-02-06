@@ -1,8 +1,9 @@
 ' Gambas class file
 
-' Static Public Gambas_Code As Integer = 0
-' Static Public C_code As Integer = 1
-' Static Public X86_asm_code As Integer = 2
+Static Public Gambas_Code As Integer = 0
+Static Public C_code As Integer = 1
+Static Public X86_asm_code As Integer = 2
+Static Public Python3_code As Integer = 3
 
 Static Public CodeNames As String[]
 Static Public FileExtension As String[]
@@ -15,35 +16,47 @@ Public CompileType As Integer
 Public NewSource As String
 Public SourceFIle As String
 Public BinaryFile As String
+Public CAsmFIle As String
 
 Static Public Sub Myinit()
 
       Print "Configuring JitCompiler"
-      CodeNames = ["Gambas Script", "C Source", "X86 Assembler"]
-      FileExtension = [".gbs", ".c", ".asm"]
-      ObjExtension = [".gbs", ".cbn", ".run"]
-      Preamble = ["Read File gambas", "Read File c", "main: ; Fasm Preamble\n"]
-      ClosingCode = ["Read File gambas", "Read File c", ""]
-      BuildCmd = [["chmod 755  &1"], ["gcc  -o &2 &1"], [" fasm &1  &2", "chmod 755 &2"]]
+      CodeNames = ["Gambas Script", "C Source     ", "X86 Assembler", "Python 3     "]
+      FileExtension = [".gbs", ".c", ".asm", "py"]
+      ObjExtension = [".gbs", ".cbn", ".run", "pyo"]
+      Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble"]
+      ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end"]
+      BuildCmd = [["chmod 755  &1"], ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"], [" fasm &1  &2", "chmod 755 &2"], ["chmod 755  &1"]]
 
-      Preamble[0] = File.Load("gambas_preamble")
-      ClosingCode[0] = File.Load("gambas_endcode")
-      Preamble[1] = File.Load("c_preamble")
-      ClosingCode[1] = File.Load("c_endcode")
-      Preamble[2] = File.Load("fasm_preamble")
-      ClosingCode[2] = File.Load("fasm_endcode")
+      Preamble[Gambas_code] = File.Load("gambas_preamble")
+      ClosingCode[Gambas_Code] = File.Load("gambas_endcode")
+      Preamble[C_code] = File.Load("c_preamble")
+      ClosingCode[C_code] = File.Load("c_endcode")
+      Preamble[X86_asm_code] = File.Load("fasm_preamble")
+      ClosingCode[X86_asm_code] = File.Load("fasm_endcode")
+      Preamble[Python3_code] = File.Load("python_preamble")
+      ClosingCode[Python3_code] = File.Load("python_endcode")
 
 End
 
 Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
 
+      Dim sline As String
+
       SourceFIle = Temp("gcode")
       BinaryFile = Temp("bfbinary")
+      CAsmFile = Temp("casm")
+      Dim indent As Integer = 0
 
       NewSource = Preamble[genLanguage]
 
       For Each p As JitPcodeInst In mpcode
-            NewSource &= p.gencode(genLanguage)
+            If indent >= 4 And If p.Instruction = p.pcode_ifNotzero Then indent -= 4
+            Dim lines As String[] = Split(p.gencode(genLanguage), "\n", "\"", True, True)
+            For Each sline In lines
+                  NewSource &= Space(indent) & sline & "\n"
+            Next
+            If p.Instruction = p.pcode_ifZero Then indent += 4
       Next
 
       NewSource &= ClosingCode[genLanguage]
@@ -55,7 +68,12 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
 
       Dim Makeit As String[] = BuildCmd[genLanguage]
       For Each mitem As String In Makeit
-            Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile), " ", "\"", True, True)
+            Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle), " ", "\"", True, True)
+            TextInfo.BFOutput.Print("Building " & CodeNames[genLanguage] & "  : " & buildit.Join(" ") & "\n\r")
+            If Not System.Exist(buildit[0]) Then
+                  Message.Warning("Tools for building " & CodeNames[genLanguage] & " not found (" & buildit[0] & ")")
+                  Break
+            Endif
             If buildit.count > 0 Then
                   Exec buildit Wait
                   If Process.LastValue <> 0 Then
@@ -69,12 +87,20 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
 
 End
 
+Static Public LastCommand As String = ""
+
 Public Sub Execute(Optional genLanguage As Integer = CompileType)
 
-      If genLanguage = 0 Then
-            TextInfo.BFOutput.Exec([SourceFile])
+      If genLanguage = Gambas_Code Or If genlanguage = Python3_code Then
+            Try TextInfo.BFOutput.Exec([SourceFile])
+            If Error Then
+                  Message.Warning("There Seems to be an Issue running Script: " & SourceFile & " : " & Error.text)
+            Endif
       Else
-            TextInfo.BFOutput.Exec([BinaryFile])
+            Try TextInfo.BFOutput.Exec([BinaryFile])
+            If Error Then
+                  Message.Warning("There Seems to be an Issue running Binary : " & BinaryFile & " : " & Error.text)
+            Endif
       Endif
 
 End

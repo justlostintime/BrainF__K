@@ -31,7 +31,7 @@ Public Sub thetimer_Timer()
 
 End
 
-Property Title As String Use $title = "Brian Fuck Interpreter/Compiler  Gambas/C/x64asm"
+Property Title As String Use $title = "Brain Fuck Interpreter/Compiler  Gambas/C/x64asm"
 
 Public Sub Form_Open()
 
@@ -122,7 +122,7 @@ Public Sub LoadProgram_Click()
       If Dialog.OpenFile() Then Return
       SourceCode.Load(Dialog.Path)
       $CurrentFile = Dialog.Path
-      InfoTab[0].Text = File.BaseName(Dialog.path)
+      AllListings[0].Text = File.BaseName(Dialog.path)
 
 Catch
       Message("Error loading  file " & Dialog.Path & " : " & Error.text)
@@ -156,13 +156,17 @@ Public Sub NewBF_Click()
             $cpu = Null
       Endif
 
-      InfoTab[0].text = "New"
+      AllListings[0].text = "New"
       If $cpu And If $cpu.Jit_gambas_Binary Then $cpu.Jit_gambas_Binary.NewSource = ""
       If $cpu And If $cpu.Jit_c_Binary Then $cpu.Jit_C_Binary.NewSource = ""
       If $cpu And If $cpu.Jit_asm_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
+      If $cpu And If $cpu.Jit_python_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
+
       JitPcodeOut.Clear()
       GambasListing.Clear()
       CListing.Clear()
+      CAsmListing.Clear()
+      PythonListing.Clear()
       AsmListing.Clear()
       CompiledInst.Clear()
       JumpTable.Clear()
@@ -221,11 +225,14 @@ Public Sub CompileMenu_Click()
             SetJumpDisplay()
             SetProgramDisplay()
             setActiveEntry()
-            InfoTab.Index = 1
+            AllListings.Index = 1
             JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
             GambasListing.text = $cpu.Jit_gambas_Binary.NewSource
             CListing.text = $cpu.Jit_C_Binary.NewSource
             AsmListing.text = $cpu.Jit_Asm_Binary.NewSource
+            PythonListing.text = $cpu.Jit_python_binary.newsource
+            CAsmListing.text = File.Load($cpu.Jit_C_Binary.CAsmFIle)
+
       Endif
       Spinner1.Stop()
       Spinner1.Hide()
@@ -378,7 +385,9 @@ Public Sub loadExample(sourceName As String)
 
       NewBF_Click()
       SourceCode.text = File.Load(sourceName)
-      InfoTab[0].text = File.BaseName(sourceName)
+      AllListings[0].text = File.BaseName(sourceName)
+
+      CompileMenu_Click()
 
 End
 
@@ -456,27 +465,33 @@ End
 
 Public Sub Form_Resize()
 
-      InfoTab.w = Me.w - 8
-      InfoTab.h = (Me.h - 30) - InfoTab.top
+      AllListings.w = Me.w - 8
+      AllListings.h = (Me.h - 30) - AllListings.top
 
-      SourceCode.h = InfoTab.H - 35
-      SourceCode.w = infotab.w - 10
+      SourceCode.h = AllListings.H - 35
+      SourceCode.w = AllListings.w - 10
 
-      JitPcodeOut.h = InfoTab.H - 35
-      JitPcodeOut.w = InfoTab.w - 10
+      JitPcodeOut.h = AllListings.H - 35
+      JitPcodeOut.w = AllListings.w - 10
 
-      GambasListing.h = InfoTab.H - 35 - gambaspanel.h
-      GambasListing.w = InfoTab.w - 10
-      CListing.h = InfoTab.H - 35 - cpanel.h
-      CListing.w = InfoTab.w - 10
-      AsmListing.h = InfoTab.H - 35 - asmpanel.h
-      AsmListing.w = InfoTab.w - 10
+      GambasListing.h = AllListings.H - 35 - gambaspanel.h
+      GambasListing.w = AllListings.w - 10
+      CListing.h = AllListings.H - 35 - cpanel.h
+      CListing.w = AllListings.w - 10
 
-      Buttons.top = InfoTab.h - Buttons.h - 50
-      RegInfo.left = InfoTab.w - RegInfo.w - 4
+      AsmListing.h = AllListings.H - 35 - asmpanel.h
+      AsmListing.w = AllListings.w - 10
+      PythonListing.h = AllListings.H - 35 - Pythonpanel.h
+      PythonListing.w = AllListings.w - 10
+
+      CAsmListing.h = AllListings.H - 35
+      CAsmListing.w = AllListings.w - 10
+
+      Buttons.top = AllListings.h - Buttons.h - 50
+      RegInfo.left = AllListings.w - RegInfo.w - 4
       RegInfo.top = Buttons.top
 
-      JumpTable.left = InfoTab.w - JumpTable.w - 4
+      JumpTable.left = AllListings.w - JumpTable.w - 4
       JumpTable.Height = (RegInfo.top - JumpTable.top - 4)
 
       CompiledInst.h = (Buttons.top - CompiledInst.Top - 4)
@@ -539,6 +554,14 @@ Public Sub runAsmBin_Click()
 
       If $cpu And If $cpu.Jit_asm_Binary And If $cpu.Jit_ASM_Binary.NewSource <> "" Then
             $cpu.Jit_asm_Binary.Execute()
+      Endif
+
+End
+
+Public Sub runPythonBin_Click()
+
+      If $cpu And If $cpu.Jit_Python_Binary And If $cpu.Jit_Python_Binary.NewSource <> "" Then
+            $cpu.Jit_Python_Binary.Execute()
       Endif
 
 End

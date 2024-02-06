@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,128,61)
+  MoveScaled(0,0,125,48)
   Text = ("Brian F__K Source Code")
   { Filemenu Menu
     Text = ("File")
@@ -79,17 +79,20 @@
       Text = ("Calculator")
     }
   }
-  { InfoTab TabStrip
-    MoveScaled(1,6,126,37)
+  { !AllListings TabStrip
+    MoveScaled(1,6,121,25)
+    #Public = True
     Expand = True
     AutoResize = True
-    Count = 6
+    Count = 8
     Index = 0
     Text = ("Source Code")
     { !SourceCode TextEditor
-      MoveScaled(0,0,123,79)
+      MoveScaled(0,0,105,18)
       #Public = True
       Expand = True
+      Highlight = "C"
+      TabSize = 4
       ShowPosition = True
       ShowLineNumber = True
       ShowModified = True
@@ -208,6 +211,27 @@
       #Public = True
       ReadOnly = True
     }
+    Index = 6
+    Text = ("C -> ASM")
+    { !CAsmListing TextArea
+      MoveScaled(1,1,103,32)
+      #Public = True
+      ReadOnly = True
+    }
+    Index = 7
+    Text = ("Python")
+    { !PythonListing TextArea
+      MoveScaled(0,5,119,27)
+      #Public = True
+      ReadOnly = True
+    }
+    { Pythonpanel Panel
+      MoveScaled(0,0,120,5)
+      { runPythonBin Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+    }
     Index = 0
   }
   { ToolBar1 ToolBar
@@ -257,7 +281,7 @@
     }
   }
   { !Spinner1 Spinner
-    MoveScaled(59,47,8,8)
+    MoveScaled(58,32,8,8)
     #Public = True
     Type = Spinner.Circle
   }
