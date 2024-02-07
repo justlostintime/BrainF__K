@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=Brain F__K
 Startup=FMain
-Version=1.2.1
+Version=1.2.2
 Component=gb.image
 Component=gb.gui
 Component=gb.form
