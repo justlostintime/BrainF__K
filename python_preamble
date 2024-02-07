@@ -5,6 +5,7 @@ import os
 import sys
 import termios
 import fcntl
+import tty
 
 storage = array('B',[0] * 30000)
 dp = 0
@@ -13,5 +14,19 @@ def putchars(charval, count):
     for i in range(count):
        print(chr(charval),end='')
        
-print("Begin Python3 execution")
+def getchar():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    term = termios.tcgetattr(fd)
+    try:
+        # term[3] &= ~(termios.ICANON | termios.ECHO | termios.IGNBRK | termios.BRKINT)
+        term[3] &= ~(termios.ICANON)
+        termios.tcsetattr(fd, termios.TCSAFLUSH, term)
 
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        newval = ord(ch) if ch != '\n' else 0
+    return newval
+
+print("Begin Python3 execution")

@@ -384,7 +384,7 @@ Public Sub loadExample(sourceName As String)
       Endif
 
       NewBF_Click()
-      SourceCode.text = File.Load(sourceName)
+      SourceCode.text = File.Load("Examples" &/ sourceName)
       AllListings[0].text = File.BaseName(sourceName)
 
       CompileMenu_Click()
