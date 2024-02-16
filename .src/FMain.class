@@ -45,6 +45,7 @@ Public Sub Form_Open()
       TextInfo.Show()
       mytimer.Delay = 0.1
       mytimer.Start()
+      Wait 0.0
 
       CompiledInst.Columns.count = 5
       CompiledInst.Columns.width = $DisplayColumnWidth
@@ -56,6 +57,8 @@ Public Sub Form_Open()
       JumpTable.Rows.count = 10
 
       FMain.text = $title
+      FMain.Show()
+      Wait 0.0
       JitCompiler.Myinit()
 
 End

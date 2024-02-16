@@ -2,7 +2,9 @@
 
 { Form Form
   MoveScaled(0,0,125,48)
+  Expand = True
   Text = ("Brian F__K Source Code")
+  AutoResize = True
   { Filemenu Menu
     Text = ("File")
     { NewBF Menu
