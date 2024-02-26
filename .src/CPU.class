@@ -153,14 +153,20 @@ PRT:
       If $raw Then
             If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
             WriteDest.print(buffer)
+            WriteDest.refresh()
+            Wait 0
             Return
       Endif
 
       If IsPunct(buffer) Or If IsNumber(buffer) Or If IsLetter(buffer) Or If IsSpace(buffer) Then
             If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
             WriteDest.print(buffer)
+            WriteDest.refresh()
+            Wait 0
       Else
             WriteDest.print(" " & Hex$($Cells[$cell], 2))
+            WriteDest.refresh()
+            Wait 0
       Endif
       Return
 

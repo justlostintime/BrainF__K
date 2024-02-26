@@ -491,6 +491,7 @@ Public Sub Form_Resize()
       CAsmListing.w = AllListings.w - 10
 
       Buttons.top = AllListings.h - Buttons.h - 50
+      HaltTracePanel.top = AllListings.h - Buttons.h - 50
       RegInfo.left = AllListings.w - RegInfo.w - 4
       RegInfo.top = Buttons.top
 

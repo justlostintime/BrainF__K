@@ -36,3 +36,21 @@ Public Sub Form_Resize()
       BFOutput.w = Me.W - 4
 
 End
+
+Public Sub KillTask_Click()
+
+      TextInfo.BFOutput.Kill()
+
+End
+
+Public Sub RefreshContent_Click()
+
+      TextInfo.BFOutput.Refresh()
+
+End
+
+Public Sub CopyText_Click()
+
+      TextInfo.BFOutput.Copy()
+
+End

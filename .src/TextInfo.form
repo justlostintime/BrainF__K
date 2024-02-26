@@ -4,9 +4,24 @@
   MoveScaled(0,0,131,107)
   Text = ("Brian F__K Program Output")
   { !BFOutput TerminalView
-    MoveScaled(1,0,129,104)
+    MoveScaled(1,4,129,100)
     #Public = True
     ToolTip = ("BrianF__K output")
+    CursorStyle = TerminalView.VerticalLine
     ShowScrollBar = True
+    WindowCommands = True
+  }
+  { KillTask Button
+    MoveScaled(2,0,17,3)
+    Text = ("Kill Program")
+  }
+  { RefreshContent Button
+    MoveScaled(21,0,17,3)
+    Text = ("Refresh Content")
+  }
+  { CopyText Button
+    MoveScaled(40,0,13,3)
+    ToolTip = ("Copy Selected Text\nIf nothing selected then copy All")
+    Text = ("Copy Content")
   }
 }

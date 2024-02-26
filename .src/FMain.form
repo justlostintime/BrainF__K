@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,125,48)
+  MoveScaled(0,0,135,45)
   Expand = True
   Text = ("Brian F__K Source Code")
   AutoResize = True
@@ -82,7 +82,7 @@
     }
   }
   { !AllListings TabStrip
-    MoveScaled(1,6,121,25)
+    MoveScaled(1,1,132,38)
     #Public = True
     Expand = True
     AutoResize = True
@@ -114,7 +114,7 @@
       Sorted = True
     }
     { Buttons Panel
-      MoveScaled(1,26,60,6)
+      MoveScaled(1,26,54,6)
       Background = Color.SoftRoyal
       { StopButton Button
         MoveScaled(1,1,12,4)
@@ -125,7 +125,7 @@
         Text = ("Step")
       }
       { ResetButton Button
-        MoveScaled(46,1,12,4)
+        MoveScaled(40,1,12,4)
         Text = ("Reset")
       }
       { RunButton Button
@@ -134,35 +134,53 @@
       }
     }
     { RegInfo Panel
-      MoveScaled(64,26,61,6)
+      MoveScaled(82,26,44,7)
       { Label1 Label
-        MoveScaled(2,1,4,4)
+        MoveScaled(1,1,4,4)
         Text = ("PC")
       }
       { Label2 Label
-        MoveScaled(19,1,5,4)
+        MoveScaled(14,1,5,4)
         Text = ("Cell ")
       }
       { !TextCell TextBox
-        MoveScaled(25,1,11,4)
+        MoveScaled(18,1,7,4)
         #Public = True
         Alignment = Align.Right
         ReadOnly = True
       }
       { !TextPC TextBox
-        MoveScaled(7,1,11,4)
+        MoveScaled(5,1,8,4)
         #Public = True
         Alignment = Align.Right
         ReadOnly = True
       }
       { Label3 Label
-        MoveScaled(37,1,7,4)
-        Text = ("Inst Cnt")
+        MoveScaled(27,1,5,5)
+        Text = ("Inst\nCnt")
       }
       { TotalInstructions TextBox
-        MoveScaled(45,1,15,4)
+        MoveScaled(32,1,11,4)
         Alignment = Align.Right
         ReadOnly = True
+      }
+    }
+    { HaltTracePanel Panel
+      MoveScaled(56,26,23,7)
+      { TraceRadio RadioButton
+        MoveScaled(10,0,11,3)
+        Text = ("Trace on")
+      }
+      { traceoffRadio RadioButton
+        MoveScaled(10,3,12,3)
+        Text = ("Trace Off")
+        Value = True
+      }
+      { !RunningMsg TextLabel
+        MoveScaled(2,2,8,3)
+        #Public = True
+        Text = ("Halted")
+        Alignment = Align.Center
       }
     }
     Index = 2
@@ -235,52 +253,6 @@
       }
     }
     Index = 0
-  }
-  { ToolBar1 ToolBar
-    MoveScaled(0,0,84,5)
-    { CompileTool ToolButton
-      MoveScaled(2,0,19,5)
-      Text = ("Compile Source")
-      Picture = Picture["icon:/medium/file"]
-    }
-    { SingleStepTool ToolButton
-      MoveScaled(23,0,16,5)
-      Text = ("Single Step")
-      Picture = Picture["icon:/medium/tab"]
-    }
-    { StopTool ToolButton
-      MoveScaled(40,0,10,5)
-      Text = ("Break")
-      Picture = Picture["icon:/medium/stop"]
-    }
-    { ToolButton4 ToolButton
-      MoveScaled(50,0,10,5)
-      Text = ("Run")
-      Picture = Picture["icon:/medium/play"]
-    }
-    { ResetTool ToolButton
-      MoveScaled(60,0,10,5)
-      Text = ("Reset")
-      Picture = Picture["icon:/medium/refresh"]
-    }
-  }
-  { Panel3 Panel
-    MoveScaled(85,0,37,5)
-    { TraceRadio RadioButton
-      MoveScaled(13,1,11,3)
-      Text = ("Trace on")
-    }
-    { traceoffRadio RadioButton
-      MoveScaled(24,1,12,3)
-      Text = ("Trace Off")
-      Value = True
-    }
-    { !RunningMsg TextLabel
-      MoveScaled(1,1,12,3)
-      #Public = True
-      Text = ("Halted")
-      Alignment = Align.Center
-    }
   }
   { !Spinner1 Spinner
     MoveScaled(58,32,8,8)
