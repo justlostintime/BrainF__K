@@ -40,7 +40,7 @@ getchar:
     lea rsi,[buffer]                              ; buffer to store the data
     mov rdx,1                                     ; Length of the buffer
     mov rdi,0                                     ; Stdin
-    mov rax,0                                     ; sys read 
+    mov rax,0                                     ; sys read
     syscall                                       ; get the character
     mov al,byte [buffer]                          ; get the input character
     cmp al,13                                     ; check if input is 13 or 10 must become 0 \n or \r
@@ -58,7 +58,7 @@ getnoset0:
 
 msg   db 'Start Fasm execution binary from Source code', 10, 0
 msglen = $ - msg - 1
-msge  db 'End Fasm execution binary from Source code', 10, 0
+msge  db 10,'End Fasm execution binary from Source code', 10, 0
 msgelen = $ - msge - 1
 buffer  db 256   dup(0)
 storage db 30000 dup(0)
