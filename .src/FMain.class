@@ -43,7 +43,7 @@ Public Sub Form_Open()
       read_Settings()
       MemoryDisplay.Show()
       TextInfo.Show()
-      mytimer.Delay = 0.1
+      mytimer.Delay = 0.2
       mytimer.Start()
       Wait 0.0
 
@@ -197,6 +197,13 @@ Public Sub SetProgramDisplay()
             Dim row As Integer = i \ cols
             Dim Col As Integer = i % cols
             CompiledInst[row, col].text = $cpu.operators[$cpu.Program[i]]
+            Print $cpu.Program[i],
+            If $cpu.Program[i] = 6 Then 
+                  Print CompiledInst[row, col].Background
+                   CompiledInst[row, col].Background = Color.Cyan
+            Else 
+                  CompiledInst[row, col].Background = Color.White
+            Endif
       Next
 
 End
@@ -452,8 +459,8 @@ Public Sub TraceRadio_Click()
 
       If $cpu Then
             $cpu.trace = True
-      Else
-            traceoffRadio.Value = True
+'      Else
+'            traceoffRadio.Value = True
       Endif
 
 End
@@ -517,6 +524,17 @@ Public Sub CompiledInst_Data(Row As Integer, Column As Integer)
       element = (row * CompiledInst.Columns.count) + column
       If element > $cpu.Program.max Then Return
       CompiledInst.Data.text = $cpu.operators[$cpu.Program[element]]
+      If $cpu.Program[element] = 6 Then
+             CompiledInst.Data.Background = Color.SoftGreen
+      Else 
+             CompiledInst.Data.Background = Color.white
+      Endif
+
+End
+
+Public Sub TicTacToeMenu_Click()
+
+       loadExample("TicTacToe.bf")
 
 End
 
@@ -568,4 +586,28 @@ Public Sub runPythonBin_Click()
             $cpu.Jit_Python_Binary.Execute()
       Endif
 
+End
+
+Public Sub Comparetosource_Click()
+
+      Dim cnt As Long = 0
+      Dim a As String = Split(SourceCode.text, "\n", "\"", True, False).Join("")
+      Dim c As New Byte[]
+      For i As Integer = 0 To a.Len - 1
+            Dim p As Integer = $cpu.operators.Find(a[i])
+            If p > -1 Then 
+                  c.Add(p)
+            Endif
+      Next
+      If c.count <> $Cpu.Program.count Then 
+            Message.Error("Program length does not match source length")
+      Endif
+      For Each b As Byte In $cpu.Program
+            If c[cnt] <> b Then 
+                  Message.Error("Source does not match program at " & CStr(cnt) & "{" & $cpu.operators[c[cnt]] & ":" & $cpu.operators[b] & "}")
+                  Return
+            Endif
+            Inc cnt
+      Next
+     Message.Info("Source and program match")
 End

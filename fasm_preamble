@@ -5,6 +5,8 @@ segment readable executable
 entry main
 
 main:
+
+    
     lea  rdi, [msg]                               ; address of msg goes into rdi
     mov  rax, msglen                              ; put length of msg into rax
     mov  rdx, rax                                 ; move rax to rdx

@@ -1,5 +1,6 @@
 
 ;******************************************************
+
     lea  rdi, [msge]                              ; address of msg goes into rdi
     mov  rax, msgelen                             ; put length of msg into rax
     mov  rdx, rax                                 ; move rax to rdx
@@ -37,6 +38,8 @@ putchar:
 
 getchar:
     push rdi                                      ; save the storage pointer
+    call initTermio                               ; set the terminal to raw mode
+        
     lea rsi,[buffer]                              ; buffer to store the data
     mov rdx,1                                     ; Length of the buffer
     mov rdi,0                                     ; Stdin
@@ -50,9 +53,45 @@ getchar:
 getset0:
     mov al,0
 getnoset0:
+    push ax
+    call resetTermio                              ; set the terminal to cooked mode
+    pop ax
     pop rdi                                       ; restore the storage pointer
-    mov [rdi], al                                ; place the byte into storage
+    mov [rdi], al                                 ; place the byte into storage
     ret
+
+initTermio:
+; Get current settings
+   mov  eax, 16             ; syscall number: SYS_ioctl
+   mov  edi, 0              ; fd:      STDIN_FILENO
+   mov  esi, 0x5401         ; request: TCGETS
+   mov  rdx, termios        ; request data
+   syscall
+
+; Modify flags
+   and byte [c_lflag], 0FDh  ; Clear ICANON to disable canonical mode
+
+; Write termios structure back
+   mov  eax, 16             ; syscall number: SYS_ioctl
+   mov  edi, 0              ; fd:      STDIN_FILENO
+   mov  esi, 0x5402         ; request: TCSETS
+   mov  rdx, termios        ; request data
+   syscall
+   ret
+
+
+resetTermio:
+
+; Modify flags
+  or byte [c_lflag], 002h ; Set ICANON to enable  canonical mode
+
+; Write termios structure back
+  mov  eax, 16             ; syscall number: SYS_ioctl
+  mov  edi, 0              ; fd:      STDIN_FILENO
+  mov  esi, 0x5402         ; request: TCSETS
+  mov  rdx, termios        ; request data
+  syscall
+  ret
 
     segment readable writable
 
@@ -62,3 +101,12 @@ msge  db 10,'End Fasm execution binary from Source code', 10, 0
 msgelen = $ - msge - 1
 buffer  db 256   dup(0)
 storage db 30000 dup(0)
+
+termios:
+  c_iflag  dd 1    dup(0); input mode flags
+  c_oflag  dd 1    dup(0); output mode flags
+  c_cflag  dd 1    dup(0); control mode flags
+  c_lflag  dd 1    dup(0); local mode flags
+  c_cc     db 32   dup(0); control characters
+  c_ispeed dd 1    dup(0); I Speed
+  c_ospeed dd 1    dup(0); o Speed

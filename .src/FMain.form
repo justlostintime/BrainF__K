@@ -24,7 +24,7 @@
     }
   }
   { Execute Menu
-    Text = ("Execute")
+    Text = ("Intepreter")
     { RunBF Menu
       Text = ("Run")
     }
@@ -41,9 +41,15 @@
     { CompileMenu Menu
       Text = ("Compile")
     }
+    { Comparetosource Menu
+      Text = ("Compare to source")
+    }
   }
   { ExamplesMenue Menu
     Text = ("Examples")
+    { TicTacToeMenu Menu
+      Text = ("Tic Tac Toe")
+    }
     { bottlesMenu Menu
       Text = ("99 Bottles")
     }
