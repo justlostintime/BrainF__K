@@ -34,11 +34,11 @@ Brainfuck is a turing-complete language modelled after the theoretical model of 
 The brainfuck turning machine:
 
 ----------------------||---||----------------------\
-  | 0 | 0 | 0 | 0 | 0 || 0 || 0 | 0 | 0 | 0 | 0 |\
+..| 0 | 0 | 0 | 0 | 0 || 0 || 0 | 0 | 0 | 0 | 0 |\
 ----------------------||---||----------------------\
-  tape ---^     ^        ^\
-    cell --------        |\
-       head (pointer) ----\
+..tape ---^.....^........^\
+....cell --------........|\
+.......head (pointer) ----\
 The "tape" shown above is the memory of the computer. The "cells" in the tape contain values. The currently selected cell is at the "head" and is sometimes called the "pointer".
 
 Instructions to manipulate the tape are fed into the machine. They are not stored in the tape itself. The instructions specify how the machine should move the tape. The cell under the head can change and the value of that cell can be updated, replaced or outputted. The full instruction set is described in detail in the Instructions section.
