@@ -7,14 +7,14 @@ Some examples from the following:
 hanoi.bf - Written by Clifford Wolf http://www.clifford.at/bfcpu/
 mandel.bf - A mandelbrot set fractal viewer in brainf*** written by Erik Bosman\
 99bottles.bf - 99 bottles of beer in Brainf*ck - Copyright (C) 2008 Raphael Bois\
-Found in Reference to the brainfuck language\
+Found in Reference to the brainfuck language
 
 bsort.bf - bubble sort of input bytes\
 qsort.bf - quick sort of input bytes\
 fib.bf - generates fibonacci numbers infinitely\
 sierpinski.bf - Shows an ASCII representation of the Sierpinski triangle\
 The Lost Kingdom\
-LostKingdom.bf\
+LostKingdom.bf
 
 Overview Adapted from the Wikipedia article on Brainfuck.
 And an extension Adapted from the Wikipedia article on Brainfuck.
