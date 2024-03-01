@@ -17,7 +17,7 @@ The Lost Kingdom\
 LostKingdom.bf\
 TicTacToe.bf
 
-Following explanation by <sunjay>[https://github.com/sunjay/brainfuck/blob/master/brainfuck.md]
+Following explanation by (sunjay)[https://github.com/sunjay/brainfuck/blob/master/brainfuck.md]
 
 Overview Adapted from the Wikipedia article on Brainfuck.
 And an extension Adapted from the Wikipedia article on Brainfuck.
