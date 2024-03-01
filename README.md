@@ -5,27 +5,25 @@ I can be used to learn simple cpu/instruction execution
 Some examples from the following:
 
 hanoi.bf - Written by Clifford Wolf http://www.clifford.at/bfcpu/
-mandel.bf - A mandelbrot set fractal viewer in brainf*** written by Erik Bosman
-99bottles.bf - 99 bottles of beer in Brainf*ck - Copyright (C) 2008 Raphael Bois
-Found in Reference to the brainfuck language
+mandel.bf - A mandelbrot set fractal viewer in brainf*** written by Erik Bosman\
+99bottles.bf - 99 bottles of beer in Brainf*ck - Copyright (C) 2008 Raphael Bois\
+Found in Reference to the brainfuck language\
 
-bsort.bf - bubble sort of input bytes
-qsort.bf - quick sort of input bytes
-fib.bf - generates fibonacci numbers infinitely
-sierpinski.bf - Shows an ASCII representation of the Sierpinski triangle
-The Lost Kingdom
-LostKingdom.bf
+bsort.bf - bubble sort of input bytes\
+qsort.bf - quick sort of input bytes\
+fib.bf - generates fibonacci numbers infinitely\
+sierpinski.bf - Shows an ASCII representation of the Sierpinski triangle\
+The Lost Kingdom\
+LostKingdom.bf\
 
-Overview From Adapted from the Wikipedia article on Brainfuck.
-And an extension form 
-Background
-Adapted from the Wikipedia article on Brainfuck.
+Overview Adapted from the Wikipedia article on Brainfuck.
+And an extension Adapted from the Wikipedia article on Brainfuck.
 
 Brainfuck is an esoteric programming language created in 1993 by Urban Müller. The language contains only eight simple commands and an instruction pointer. While it is fully Turing-complete, it is not intended for practical use, but to challenge and amuse programmers.
 
 The language's name is a reference to the slang term brainfuck, which refers to things so complicated or unusual that they exceed the limits of one's understanding.
 
-Scope and Justification
+Scope and Justification\
 When the language was first conceived of, the creator specified its eight instructions, but not much else about how the language should behave at runtime. This led to a lot of ambiguity and many varying implementations. This document intends to resolve those issues and specify the behaviour in as much detail as possible.
 
 This document proposes just one way that the brainfuck programming language could behave. There are many implementations of brainfuck. This is not the brainfuck specification. Each implementation works differently to suit the needs of its author. The cell sizes differ, the memory layout changes and sometimes people even add or remove instructions from the original set. This specification aims to tie together most of the common implementations and assumptions into a single document which anyone can use to implement brainfuck.
