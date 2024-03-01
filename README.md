@@ -64,6 +64,7 @@ The brainfuck tape is made of an "infinite" collection of 1 byte cells. Each cel
 Since the numbers are unsigned, there is no need for any complex integer implementation. If the upper limit of the cell is reached, it wraps back to zero. If zero is decremented, it must wrap back to 11111111. Normal binary number arithmetic rules applies.
 
 Arithmetic and Wrapping Behaviour Examples
+```
 Increment:
 
 Current value: 00000011
@@ -90,7 +91,8 @@ Next value: 00000000
 Current value: 00000000
 Instruction: -
 Next value: 11111111
-The Program Counter and Address Pointer
+```
+## The Program Counter and Address Pointer
 The Program Counter (PC) indicates where the processor is in its program. The majority of the time, this value will be incremented by one after every instruction. The two exceptions to this are the two jump instructions which cause the PC to change based on the value of the current cell indicated by the address pointer. The program begins at the first instruction. The processor stops running when it is out of instructions to run.
 
 The Address Pointer (The "Pointer") indicates the "address" of the current cell in memory.
