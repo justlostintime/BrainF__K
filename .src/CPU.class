@@ -55,10 +55,10 @@ End
 Public BreakPoints As Integer[] = [7200]
 Public EnableBreakpoints As Boolean = True
 Public ReturnAddress As Integer = 0
+
 Public Sub _call()
 
       Dim jumpto As Integer
-      Dim returnAddress As Integer
 
       Obtain_keypress()
       $running = True
