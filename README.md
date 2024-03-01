@@ -44,7 +44,7 @@ The "tape" shown above is the memory of the computer. The "cells" in the tape co
 
 Instructions to manipulate the tape are fed into the machine. They are not stored in the tape itself. The instructions specify how the machine should move the tape. The cell under the head can change and the value of that cell can be updated, replaced or outputted. The full instruction set is described in detail in the Instructions section.
 
-Instructions
+## Instructions
 Brainfuck has 8 basic instructions:
 ```
 > - move the pointer right
@@ -58,7 +58,7 @@ Brainfuck has 8 basic instructions:
 ```
 These are specified in more detail in the sections below.
 
-Memory Layout
+## Memory Layout
 The brainfuck tape is made of an "infinite" collection of 1 byte cells. Each cell represents a single, unsigned 8-bit number. Cells start initialized at zero.
 
 Since the numbers are unsigned, there is no need for any complex integer implementation. If the upper limit of the cell is reached, it wraps back to zero. If zero is decremented, it must wrap back to 11111111. Normal binary number arithmetic rules applies.
@@ -107,28 +107,28 @@ It is highly recommended, to report an error and then abort if wrapping results 
 
 Note that in some situations assuming wrapping behaviour is useful because it allows you to quickly get to either end of the memory addresses. However, since we are using the assumption that the tape is infinite, this convenience cannot be relied on and should not be used.
 
-Move Right (>)
+### Move Right (>)
 Moves the pointer to the next cell (to the right of the current cell). It may be necessary to expand the memory buffer in order to make sure the tape is infinite.
 
 Wrapping is not recommended. It is better to abort if previously used cells are going to be overwritten.
 
 Seriously, do not overwrite cells that were previously used. That means that when you reach the end of your available memory, you should not loop back and start overwriting the cells from the beginning.
 
-Move Left (<)
+### Move Left (<)
 Moves the pointer to the previous cell (to the left of the current cell).
 
 This instruction is almost identical in implementation to the move right instruction. See the description of the Move Right instruction for more details.
 
-Increment (+)
+### Increment (+)
 Increments the value of the current cell by 1. Wrap the value back to zero if the value overflows the byte. See the Memory Layout section for more information about cell sizes and arithmetic.
 
-Decrement (-)
+### Decrement (-)
 Decrements the value of the current cell by 1. Wrap the value back to the maximum if the value goes below zero. See the Memory Layout section for more information about cell sizes and arithmetic.
 
-Write (.)
+### Write (.)
 Writes (outputs) the value of the current cell. The specific implementation of this command is left up to the implementer.
 
-Some considerations:
+### Some considerations:
 
 Typically the output device is a display or shell
 The value of a cell is represented as a plain byte which does not necessarily translate directly to a non-ascii character
@@ -140,15 +140,15 @@ Reads the next byte from an input stream and replaces the value of the current c
 
 If there is no more input to read, the cell should be set to zero in order to signify the End-of-File (EOF). This gives the program a chance to respond to the EOF.
 
-Jump If Zero ([)
+### Jump If Zero ([)
 Jumps to the matching ] instruction if the value of the current cell is zero. If the value of the current cell is not zero, the program moves on as normal. This has the effect of entering a "loop" body when there is a non-zero value in the current cell. By jumping if the value is zero, some instructions can be skipped based on the value of the current cell.
 
 This is one of two instructions that can modify the PC.
 
 It is important to jump to the matching ] instruction so that these jumps can be nested when necessary. If a matching ] is not found, the program should abort with an error message.
 
-Example:
-
+#### Example:
+```
 + [ > + [ . ] ]
 1 2 3 4 5 6 7 8
 Add one to the current cell
@@ -159,7 +159,9 @@ Jump to instruction 7 if the current cell is zero
 Output the value of the current cell
 Jump to instruction 5 if the current cell is not zero
 Jump to instruction 2 if the current cell is not zero
-Jump Unless Zero (])
+```
+
+### Jump Unless Zero (])
 Jumps to the matching [ instruction if the value of the current cell is not zero. This has the effect of jumping back to the beginning of a "loop" while the current cell is non-zero. If the current cell is zero, the program continues past this instruction without doing anything.
 
 This is the second of two instructions that can modify the PC.
@@ -171,11 +173,11 @@ See the Jump If Zero section for more information and an example.
 Other Characters
 In general, other characters found in a brainfuck file should just be ignored. Those characters could be documentation, or something else entirely.
 
-Hello World Example
+#### Hello World Example
 Adapted from the Wikipedia article on Brainfuck.
 
 The following program prints "Hello World!" and a newline to the screen:
-
+```
 [ This program prints "Hello World!" and a newline to the screen, its
   length is 106 active command characters. [It is not the shortest.]
 
@@ -222,3 +224,4 @@ Pointer :   ^
 For "readability", this code has been spread across many lines and blanks and comments have been added. Brainfuck ignores all characters except the eight commands +-<>[],. so no special syntax for comments is needed (as long as the comments don't contain the command characters). The code could just as well have been written as:
 
 ++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+```
