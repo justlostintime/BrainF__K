@@ -1,6 +1,6 @@
 # BrainF__K
 This is a simple implenetation of the Brain F__K interpreter
-I can be used to learn simple cpu/instruction execution
+it can be used to learn simple cpu/instruction execution
 
 #### Some examples from the following:
 
@@ -14,7 +14,10 @@ qsort.bf - quick sort of input bytes\
 fib.bf - generates fibonacci numbers infinitely\
 sierpinski.bf - Shows an ASCII representation of the Sierpinski triangle\
 The Lost Kingdom\
-LostKingdom.bf
+LostKingdom.bf\
+TicTacToe.bf
+
+Following explanation by <sunjay>[https://github.com/sunjay/brainfuck/blob/master/brainfuck.md]
 
 Overview Adapted from the Wikipedia article on Brainfuck.
 And an extension Adapted from the Wikipedia article on Brainfuck.
