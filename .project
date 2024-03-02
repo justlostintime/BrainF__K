@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=Brain F__K
 Startup=FMain
-Version=1.2.2
+Version=1.2.3
 Component=gb.image
 Component=gb.gui
 Component=gb.form
@@ -16,7 +16,7 @@ Component=gb.form.print
 Component=gb.form.stock
 Component=gb.term
 Component=gb.form.terminal
-Description="An implementation and examples of the very simple Brain F__K interpreter\n\nAlso implements a JIT translator/compiler output for Gambas and Python Scripts, C and Asm binary programs\n\nUpdated Asm and C generated code improving Keyboard handling.\nadded Tic Tac Toe game.\n\nEach binary/script may be executed from the coresponding source code page.\nThe c source is built using the gcc compiler and the ASM source is built using the fasm fast asembler\nBe sure to have these installed before you try to Build/run the corresponding Binaries\n\nIncludes Examples of \nCalc pi, calculator, mandelbrot, fibonacci, etc all written in BF\n\nFix Python source code generation to correctly build getchar()"
+Description="An implementation and examples of the very simple Brain F__K interpreter\n\nAlso implements a JIT translator/compiler output for Gambas and Python Scripts, C and Asm binary programs, Simple Optimizer for Pcode before real code generation.\n\nUpdated Asm and C generated code improving Keyboard handling.\nadded Tic Tac Toe game.\n\nEach binary/script may be executed from the coresponding source code page.\nThe c source is built using the gcc compiler and the ASM source is built using the fasm fast asembler\nBe sure to have these installed before you try to Build/run the corresponding Binaries\n\nIncludes Examples of \nCalc pi, calculator, mandelbrot, fibonacci, etc all written in BF\n\nFix Python source code generation to correctly build getchar()"
 Authors="Justlostintime, Westwood"
 TabSize=6
 Language=en_US
