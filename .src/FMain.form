@@ -101,6 +101,7 @@
       Expand = True
       Highlight = "C"
       TabSize = 4
+      Wrap = True
       ShowPosition = True
       ShowLineNumber = True
       ShowModified = True

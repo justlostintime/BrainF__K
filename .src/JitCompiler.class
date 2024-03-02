@@ -19,7 +19,7 @@ Public BinaryFile As String
 Public CAsmFIle As String
 
 Static Public Sub Myinit()
-
+      
       Print "Configuring JitCompiler"
       CodeNames = ["Gambas Script", "C Source     ", "X86 Assembler", "Python 3     "]
       FileExtension = [".gbs", ".c", ".asm", "py"]
@@ -27,7 +27,7 @@ Static Public Sub Myinit()
       Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble"]
       ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end"]
       BuildCmd = [["chmod 755  &1"], ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"], [" fasm &1  &2", "chmod 755 &2"], ["chmod 755  &1"]]
-
+      
       Preamble[Gambas_code] = File.Load("gambas_preamble")
       ClosingCode[Gambas_Code] = File.Load("gambas_endcode")
       Preamble[C_code] = File.Load("c_preamble")
@@ -36,20 +36,20 @@ Static Public Sub Myinit()
       ClosingCode[X86_asm_code] = File.Load("fasm_endcode")
       Preamble[Python3_code] = File.Load("python_preamble")
       ClosingCode[Python3_code] = File.Load("python_endcode")
-
+      
 End
 
 Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
-
+      
       Dim sline As String
-
+      
       SourceFIle = Temp("gcode")
       BinaryFile = Temp("bfbinary")
       CAsmFile = Temp("casm")
       Dim indent As Integer = 0
-
+      
       NewSource = Preamble[genLanguage]
-
+      
       For Each p As JitPcodeInst In mpcode
             If indent >= 4 And If p.Instruction = p.pcode_ifNotzero Then indent -= 4
             Dim lines As String[] = Split(p.gencode(genLanguage), "\n", "\"", True, True)
@@ -58,14 +58,21 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
             Next
             If p.Instruction = p.pcode_ifZero Then indent += 4
       Next
-
+      
+      ' ' Optimize code if possible
+      ' Select Case genLanguage
+      '       Case C_code
+      '             NewSource = C_Opt(NewSource)
+      '       Case 
+      ' End Select
+      ' 
       NewSource &= ClosingCode[genLanguage]
-
+      
       SourceFile = File.setext(SourceFile, FileExtension[genLanguage])
       BinaryFile = File.SetExt(BinaryFile, ObjExtension[genLanguage])
-
+      
       File.Save(SourceFile, NewSource)
-
+      
       Dim Makeit As String[] = BuildCmd[genLanguage]
       For Each mitem As String In Makeit
             Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle), " ", "\"", True, True)
@@ -82,15 +89,15 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
                   Endif
             Endif
       Next
-
+      
       CompileType = genLanguage
-
+      
 End
 
 Static Public LastCommand As String = ""
 
 Public Sub Execute(Optional genLanguage As Integer = CompileType)
-
+      
       If genLanguage = Gambas_Code Or If genlanguage = Python3_code Then
             Try TextInfo.BFOutput.Exec([SourceFile])
             If Error Then
@@ -102,5 +109,5 @@ Public Sub Execute(Optional genLanguage As Integer = CompileType)
                   Message.Warning("There Seems to be an Issue running Binary : " & BinaryFile & " : " & Error.text)
             Endif
       Endif
-
+      
 End

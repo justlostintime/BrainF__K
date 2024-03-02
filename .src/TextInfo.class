@@ -1,56 +1,56 @@
 ' Gambas class file
 
 Public Sub Form_Close()
-
+      
       write_settings()
-
+      
 End
 
 Public Sub Form_Open()
-
+      
       read_Settings()
-
+      
 End
 
 Public Sub read_Settings()
-
+      
       Me.top = Settings["OutputWindow/top", Me.Top]
       Me.Left = Settings["OutputWindow/Left", Me.Left]
       Me.Height = Settings["OutputWindow/Height", Me.Height]
       Me.Width = Settings["OutputWindow/Width", Me.Width]
-
+      
 End
 
 Public Sub write_settings()
-
+      
       Settings["OutputWindow/Top"] = Me.Top
       Settings["OutputWindow/Left"] = Me.Left
       Settings["OutputWindow/Height"] = Me.Height
       Settings["OutputWindow/Width"] = Me.Width
-
+      
 End
 
 Public Sub Form_Resize()
-
+      
       BFOutput.h = Me.H - 4
       BFOutput.w = Me.W - 4
-
+      
 End
 
 Public Sub KillTask_Click()
-
+      
       TextInfo.BFOutput.Kill()
-
+      
 End
 
 Public Sub RefreshContent_Click()
-
+      
       TextInfo.BFOutput.Refresh()
-
+      
 End
 
 Public Sub CopyText_Click()
-
+      
       TextInfo.BFOutput.Copy()
-
+      
 End

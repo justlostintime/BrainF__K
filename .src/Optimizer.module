@@ -1,0 +1,100 @@
+' Gambas module file
+
+Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode_ifzero = 4, pcode_ifNotZero = 5, pcode_input = 6, pcode_output = 7, pcode_set = 8
+Public astext As String[] = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
+Public Opts As Collection = ["ClearCell-": "435",                               ' look for [-]
+      "ClearCell+": "425",                           ' look for [+]
+      "AddAndSet": "28",                           ' look for ++++[-]
+      "SubAndSet": "38",                          ' look for ---- [-]
+      "SetAndSet": "88",                            ' look for set value, set value
+      "SetAndInc": "82",                             ' look for set value then add  value
+      "SetAndDec": "83"                            ' look for set value then subtract value
+]
+
+Public Sub _call(Source As JitPcodeInst[]) As JitPcodeInst[]
+      
+      Dim newCode As JitPcodeInst[] = Source.Copy()
+      
+      For Each pattern As String In Opts
+            Dim list As Integer[] = FindSeq(newCode, pattern)
+            If list.count > 0 Then 
+                  ReplaceSeq(newCode, pattern, Opts.key, list.Reverse())
+            Endif
+      Next
+      
+      Return newCode
+      
+End
+
+Sub FindSeq(source As JitPcodeInst[], Pattern As String) As Integer[]
+      
+      Dim Locations As New Integer[]
+      Dim lastLocation As Integer = 1
+      Dim flatSet As String = MakeFlat(source)
+      
+      While lastLocation <> 0
+            Try lastLocation = InStr(flatset, pattern, lastLocation)
+            If Error Then Break
+            If lastlocation <> 0 Then 
+                  Locations.Add(lastLocation - 1)  ' convert to zero based value from 1 based index
+                  lastLocation += pattern.len - 1     ' again convert offset
+            Endif
+      Wend
+      
+      Return Locations
+      
+End
+
+Sub ReplaceSeq(source As JitPcodeInst[], Pattern As String, OptName As String, index As Integer[])
+      
+      Dim insertcode As New JitPcodeInst[]
+      Dim removed As JitPcodeInst[]
+      Dim inst As JitPcodeInst
+      Dim math As Byte
+      
+      For Each i As Integer In index
+            insertcode.Clear()
+            removed = source.Extract(i, pattern.len)
+            Select Case OptName
+                  Case "ClearCell+", "ClearCell-"
+                        If removed[1].Operand = 1 Then 
+                              inst = New JitPcodeInst(pcode_set, 0)
+                              insertcode.Add(inst)
+                        Else 
+                              TextInfo.BFOutput.Print("Optimizing : Possible Endless loop at instruction " & removed.First.SourceLineNumber & "\n\r")
+                              insertcode = removed
+                        Endif
+                        
+                  Case "AddAndSet", "SubAndSet", "SetAndSet"
+                        insertcode.Add(removed.last)
+                        
+                  Case "SetAndInc"
+                        math = CByte(CLong(removed.First.Operand))
+                        math += CByte(CLong(removed.Last.operand))
+                        removed.First.Operand = math
+                        insertcode.Add(removed.First)
+                        
+                  Case "SetAndDec"
+                        math = CByte(CLong(removed.First.Operand))
+                        math -= CByte(CLong(removed.Last.Operand))
+                        removed.First.Operand = math
+                        insertcode.Add(removed.First)
+                        
+            End Select
+            If insertcode.count > 0 Then 
+                  source.Insert(insertcode, i)
+            Endif
+      Next
+      
+End
+
+Sub MakeFlat(source As JitPcodeInst[]) As String
+      
+      Dim flatSet As New Byte[]
+      
+      For Each i As JitPcodeInst In source
+            flatSet.Add(Asc(astext[i.Instruction]))
+      Next
+      Return flatset.ToString()
+      
+End

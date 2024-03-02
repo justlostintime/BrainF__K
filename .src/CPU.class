@@ -46,9 +46,9 @@ Public WhileStack As New Integer[]
 Event traceInfo()
 
 Public Sub MyTimer_Timer()
-
+      
       Inc ticks
-
+      
 End
 
 '' this is the main entry point of the cpu function to start running the program
@@ -57,16 +57,16 @@ Public EnableBreakpoints As Boolean = True
 Public ReturnAddress As Integer = 0
 
 Public Sub _call()
-
+      
       Dim jumpto As Integer
-
+      
       Obtain_keypress()
       $running = True
-
+      
       While True
             Wait 0
             Inc $InstCnt
-
+            
             If $PC >= $Program.count Then
                   WriteDest.print("\n\rEnd of execution\n\r")
                   ResetMachine()
@@ -76,61 +76,61 @@ Public Sub _call()
             If EnableBreakPoints And If $PC >= BreakPoints[0] Then
                   Stop
             Endif
-
+            
             If $break Then
                   WriteDest.print(Subst("\n\rBreak at  &1 cell &2\n\r", $pc, $Cell))
                   $break = False
                   Break
             Endif
-
+            
             If $Reset Then
                   ResetMachine()
                   Break
             Endif
-
+            
             On $Program[$PC] GoSub CellLeft, CellRight, CellAdd, CellSub, BRZ, BNZ, PRT, RDR
             Inc $PC
-
+            
             If $SingleStep Then
                   $SingleStep = False
                   Break
             Endif
-
+            
             If $trace Then
                   Raise Traceinfo()
             Endif
-
+            
       Wend
-
+      
       $running = False
       Release_keypress()
-
+      
       Return
-
+      
 CellRight:
       Inc $cell
       If $Cell > $Cells.max Then     ' add a new cell if past end of cells
             $Cells.Push(0)
       Endif
       Return
-
+      
 CellLeft:
       Dec $cell
       If $Cell < 0 Then                         ' if to far to left then just add a new cell at the beginning
-           Stop
+            Stop
             ' $Cells.add(0, 0)
             ' $Cell = 0
       Endif
       Return
-
+      
 CellAdd:
       Inc $Cells[$Cell]
       Return
-
+      
 CellSub:
       Dec $Cells[$cell]
       Return
-
+      
 BRZ:
       If $Cells[$Cell] = 0 Then         ' jump forward to matching ] in the code
             jumpto = SysJumpStack.find($pc)
@@ -142,13 +142,13 @@ BRZ:
                   $pc = SysReturnStack[jumpto] - 1               ' cpu will inc right after this instruction
             Endif
       Endif
-
+      
       Return
-
+      
 BNZ:
-
+      
       If $Cells[$Cell] <> 0 Then         ' Jump back to the matching [
-
+            
             jumpto = SysReturnStack.find($pc)
             If jumpto = -1 Then
                   WriteDest.print("\n\rError jump dest not found!! No Matching [\n\r")
@@ -158,9 +158,9 @@ BNZ:
                   $pc = SysJumpStack[jumpto] - 1               ' cpu will inc right after this instruction
             Endif
       Endif
-
+      
       Return
-
+      
 PRT:
       Dim buffer As String = Chr$($Cells[$cell])
       If $raw Then
@@ -170,7 +170,7 @@ PRT:
             Wait 0
             Return
       Endif
-
+      
       If IsPunct(buffer) Or If IsNumber(buffer) Or If IsLetter(buffer) Or If IsSpace(buffer) Then
             If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
             WriteDest.print(buffer)
@@ -182,7 +182,7 @@ PRT:
             Wait 0
       Endif
       Return
-
+      
 RDR:
       If $inputBuffer.count = 0 Then
             Wait 0
@@ -190,14 +190,14 @@ RDR:
       Endif
       $Cells[$cell] = $inputBuffer.Pop()
       Return
-
+      
 Exitcpu:
       Release_keypress()
-
+      
 End
 
 Public Sub ResetMachine()
-
+      
       $Cells = [0]
       $Home = 0
       $pc = 0
@@ -210,57 +210,60 @@ Public Sub ResetMachine()
       $running = False
       $Trace = False
       $InstCnt = 0
-
+      
 End
 
 '' the writeto object must have a print function
 Public Sub _new(source As String, writeto As Object, Optional readfrom As String = "", MaxCellCount As Integer = 1000000)
-
+      
       ResetMachine()
       cpuTimer.Delay = 0.1
       cpuTimer.Start()
       $Trace = False
-
+      
       $MaxCell = MaxCellCount
-
+      
       If readfrom.len > 0 Then
             $InputSource = $InputSource.fromstring(readfrom)
       Else
             $InputSource = [0]
       Endif
-
+      
       WriteDest = writeto
       WriteDest.print("\e[2J\e[0mBrain F__K execution results\n\r")
-
+      
       $compiled = CompileProgram(Source)
+      
       $jit_Pcode = JitPcode(compiledSource)
+      $jit_Pcode = Optimizer($jit_Pcode)
+      
       $jit_gambas_Binary = New JitCompiler($jit_Pcode, 0)
       $jit_c_Binary = New JitCompiler($jit_Pcode, 1)
       $jit_asm_Binary = New JitCompiler($jit_Pcode, 2)
       $jit_python_binary = New JitCompiler($jit_pcode, 3)
-
+      
 End
 
 Public Sub _free()
-
+      
       cpuTimer.Stop()
       cpuTimer = Null
-
+      
 End
 
 Public Sub CompileProgram(Source As String) As Boolean
-
+      
       Dim LineNo As Integer = 1
       Dim PosChar As Integer = 1
       Dim ProgPos As Integer = 0
-
+      
       Dim jumpStack As New Integer[]
       Dim returnStack As New Integer[]
-
+      
       Dim valid As Boolean = True
-
+      
       compiledSource = New Byte[]
-
+      
       For i As Integer = 0 To Source.Len
             If i % 100 = 0 Then
                   Wait 0
@@ -270,9 +273,9 @@ Public Sub CompileProgram(Source As String) As Boolean
                   Inc LineNo
                   PosChar = 1
             Endif
-
+            
             If Not operators.Exist(Source[i]) Then Continue
-
+            
             Select Case Source[i]
                   Case "["     ' start of jump or loop
                         jumpStack.push(ProgPos)
@@ -286,15 +289,15 @@ Public Sub CompileProgram(Source As String) As Boolean
                               SysJumpStack.push(jumpStack.Pop())
                               SysReturnStack.push(ProgPos)
                         Endif
-
+                        
             End Select
-
+            
             Dim InstValue As Byte = operators.find(Source[i])
             compiledSource.push(InstValue)
             Inc ProgPos
-
+            
       Next
-
+      
       For i = 0 To returnStack.Max
             If i % 100 = 0 Then
                   Wait 0
@@ -304,37 +307,37 @@ Public Sub CompileProgram(Source As String) As Boolean
                   valid = False
             Endif
       Next
-
+      
       If valid = True Then
             $Program = compiledSource
       Else
             $Program = New Byte[]
       Endif
-
+      
       Return valid
-
+      
 End
 
 Sub CompileError(text As String, lineno As Integer, textpos As Integer)
-
+      
       WriteDest.print("Compile Error at &1:&2 " & text, lineno, textpos)
-
+      
 End
 
 Public Sub release_keypress()
-
+      
       Object.Detach(TextInfo.BFOutput)
-
+      
 End
 
 Public Sub Obtain_keypress()
-
+      
       Object.Attach(TextInfo.bfoutput, Me, "terminal")
-
+      
 End
 
 Public Sub terminal_KeyRelease()
-
+      
       Print Asc(Key.text)
       Dim val As Byte = Asc(Key.text)
       WriteDest.print(Key.text)
@@ -344,5 +347,5 @@ Public Sub terminal_KeyRelease()
       Else
             $inputbuffer.push(val)
       Endif
-
+      
 End
