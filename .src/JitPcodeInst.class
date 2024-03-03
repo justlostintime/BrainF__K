@@ -12,7 +12,10 @@ Public Languages As String[][] = [
       ["    sub rdi,&1\n", "    add rdi,&1\n", "    add byte [rdi],&1\n", "    sub byte [rdi],&1\n",
       "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", 
       "    mov ax,&1\n    call putchars\n", "    call getchar\n", "    mov byte[rdi],&1\n"],
-      ["dp -= &1\n", "dp += &1\n", "storage[dp] += &1\n", "storage[dp] -= &1\n", "while storage[dp] > 0:\n",
+      ["dp -= &1\n", "dp += &1\n",
+      "storage[dp] = ((storage[dp]+&1)%256)\n",
+      "storage[dp] = storage[dp] - &1 if (storage[dp] - &1) >= 0 else (256 + (storage[dp] - &1))\n", 
+      "while storage[dp] > 0:\n",
       "\n", "putchars(storage[dp],&1)\n", "storage[dp] = getchar()\n", "storage[dp] = &1\n"]
 ]
 Public LanguagesSingle As String[][] = [
@@ -22,7 +25,10 @@ Public LanguagesSingle As String[][] = [
       "}\n", "putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp=&1;\n"],
       ["    dec rdi\n", "    inc rdi\n", "    inc byte [rdi]\n", "    dec byte [rdi]\n",
       "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", "    call putchar\n", "    call getchar\n", "    mov byte[rdi],&1\n"],
-      ["dp -=  1\n", "dp += 1\n", "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n", "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n", "while storage[dp] > 0:\n",
+      ["dp -=  1\n", "dp += 1\n",
+      "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n",
+      "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n",
+      "while storage[dp] > 0:\n",
       "\n", "print(chr(storage[dp]),end='')\n", "storage[dp] = getchar()\n", "storage[dp]=&1\n"]
 ]
 

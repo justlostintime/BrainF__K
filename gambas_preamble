@@ -1,4 +1,4 @@
-#!/usr/bin/env gbs3
+#!/usr/bin/env -S  gbs3 -T
  'Fast Unsafe
  use "gb.term"
  extern getchar() As Integer In "libc:6"
@@ -13,4 +13,3 @@
     t.icanon = false
     file.in.term.setattr(1,t)
 '********************************************
-
