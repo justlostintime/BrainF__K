@@ -15,6 +15,7 @@ Public Sub _call(Source As JitPcodeInst[]) As JitPcodeInst[]
       
       Dim newCode As JitPcodeInst[] = Source.Copy()
       
+      SpecialChecks(newCode)
       For Each pattern As String In Opts
             Dim list As Integer[] = FindSeq(newCode, pattern)
             If list.count > 0 Then 
@@ -23,6 +24,20 @@ Public Sub _call(Source As JitPcodeInst[]) As JitPcodeInst[]
       Next
       
       Return newCode
+      
+End
+
+Sub SpecialChecks(CodeList As JitPcodeInst[])
+      
+      Dim changed As Boolean = True
+      
+      While changed = True
+            changed = False
+            If CodeList.Last.Instruction = JitPcodeInst.pcode_left Or If CodeList.Last.Instruction = JitPcodeInst.pcode_right Then
+                  CodeList.Pop()
+                  changed = True
+            Endif
+      Wend
       
 End
 

@@ -36,7 +36,7 @@ End
 
 Public Sub Form_Resize()
       
-      BFOutput.h = Me.H - 4
+      BFOutput.h = Me.H - BFOutput.Top - 4
       BFOutput.w = Me.W - 4
       
 End

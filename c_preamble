@@ -3,7 +3,6 @@
 #include <termios.h>
 #include <stdio.h>
 
-
 /* Initialize new terminal i/o settings */
 static struct termios old, new1;
 void initTermios(int echo) {
@@ -23,7 +22,11 @@ int readchar() {
   initTermios(0);
   int  a ;
   a = getchar();
-  if (a == 13 | a == 10) a = 0;
+  if (a == 13 | a == 10) { 
+    a = 0;
+  } else {
+    putchar(a);
+  } 
   resetTermios();
   return a;
 }

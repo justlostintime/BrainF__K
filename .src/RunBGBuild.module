@@ -23,6 +23,7 @@ Public Sub _Call(commands As String[], name As String, title As String) As Proce
       OutputDisplay.text = title
       
       OutputDisplay.Show()
+      OutputDisplay.BfOutput.Clear()
       Return OutputDisplay.BfOutput.Exec([newfilename])
       
 End
