@@ -81,6 +81,9 @@ Public Sub Form_Close()
       If SourceCodeUpdated Then
             SaveBF_Click()
       Endif
+      If RunBGBuild.OutputDisplay <> Null Then
+            RunBGBuild.OutputDisplay.Close()
+      Endif
       
 End
 
@@ -222,6 +225,20 @@ Public Sub SetJumpDisplay()
       
 End
 
+Sub withLineNo(source As String) As String
+      
+      Dim newsource As New String[]
+      Dim oldsource As String[] = Split(source, "\n", "\"", False, True) 
+      Dim linecount As Integer = 1
+      
+      For Each ss As String In oldsource
+            newsource.Add(Format(linecount, "#########0") & ":    " & ss)
+            Inc linecount
+      Next
+      Return newsource.Join("\n")
+      
+End
+
 Public Sub CompileMenu_Click()
       
       If $Cpu And If $Cpu.running Then
@@ -237,10 +254,11 @@ Public Sub CompileMenu_Click()
             setActiveEntry()
             AllListings.Index = 1
             JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
-            GambasListing.text = $cpu.Jit_gambas_Binary.NewSource
-            CListing.text = $cpu.Jit_C_Binary.NewSource
-            AsmListing.text = $cpu.Jit_Asm_Binary.NewSource
-            PythonListing.text = $cpu.Jit_python_binary.newsource
+            GambasListing.text = withLineNo($cpu.Jit_gambas_Binary.NewSource)
+            CListing.text = withLineNo($cpu.Jit_C_Binary.NewSource)
+            AsmListing.text = withLineNo($cpu.Jit_Asm_Binary.NewSource)
+            PythonListing.text = withLineNo($cpu.Jit_python_binary.newsource)
+            RustListing.Text = withLineNo($cpu.Jit_Rust_binary.newsource)
             CAsmListing.text = File.Load($cpu.Jit_C_Binary.CAsmFIle)
             
       Endif
@@ -493,6 +511,8 @@ Public Sub Form_Resize()
       AsmListing.w = AllListings.w - 10
       PythonListing.h = AllListings.H - 35 - Pythonpanel.h
       PythonListing.w = AllListings.w - 10
+      RustListing.h = AllListings.H - 35 - Rustpanel.h
+      RustListing.w = AllListings.w - 10
       
       CAsmListing.h = AllListings.H - 35
       CAsmListing.w = AllListings.w - 10
@@ -611,5 +631,13 @@ Public Sub Comparetosource_Click()
             Inc cnt
       Next
       Message.Info("Source and program match")
+      
+End
+
+Public Sub runRustBin_Click()
+      
+      If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
+            $cpu.Jit_Rust_Binary.Execute()
+      Endif
       
 End

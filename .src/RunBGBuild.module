@@ -1,0 +1,28 @@
+' Gambas module file
+
+Public OutputDisplay As New TextInfo
+
+Public Sub _Call(commands As String[], name As String, title As String) As Process
+      
+      Dim newfilename As String = Temp(name)
+      
+      newfilename = File.SetExt(newfilename, "sh")
+      Dim openit As File 
+      openit = Open newfilename For Write Create
+      Print #openit, "#!/bin/bash"
+      For Each s As String In commands
+            Print #openit, s
+      Next
+      
+      Close openit
+      
+      Chmod newfilename To "rwxr-xr-x"
+      
+      OutputDisplay.Name = name
+      OutputDisplay.Activate()
+      OutputDisplay.text = title
+      
+      OutputDisplay.Show()
+      Return OutputDisplay.BfOutput.Exec([newfilename])
+      
+End

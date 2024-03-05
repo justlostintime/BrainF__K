@@ -92,7 +92,7 @@
     #Public = True
     Expand = True
     AutoResize = True
-    Count = 8
+    Count = 9
     Index = 0
     Text = ("Source Code")
     { !SourceCode TextEditor
@@ -258,6 +258,21 @@
         MoveScaled(1,0,15,4)
         Text = ("Execute")
       }
+    }
+    Index = 8
+    Text = ("Rust")
+    { Rustpanel Panel
+      MoveScaled(0,0,118,5)
+      { runRustBin Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+    }
+    { !RustListing TextArea
+      MoveScaled(0,5,119,27)
+      #Public = True
+      ReadOnly = True
+      Wrap = True
     }
     Index = 0
   }

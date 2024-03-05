@@ -4,6 +4,7 @@ Static Public Gambas_Code As Integer = 0
 Static Public C_code As Integer = 1
 Static Public X86_asm_code As Integer = 2
 Static Public Python3_code As Integer = 3
+Static Public Rust_code As Integer = 4
 
 Static Public CodeNames As String[]
 Static Public FileExtension As String[]
@@ -17,16 +18,31 @@ Public NewSource As String
 Public SourceFIle As String
 Public BinaryFile As String
 Public CAsmFIle As String
+Public BasePath As String
+Public RustTerm As Process = Null
 
 Static Public Sub Myinit()
       
       Print "Configuring JitCompiler"
-      CodeNames = ["Gambas Script", "C Source     ", "X86 Assembler", "Python 3     "]
-      FileExtension = [".gbs", ".c", ".asm", "py"]
-      ObjExtension = [".gbs", ".cbn", ".run", "pyo"]
-      Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble"]
-      ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end"]
-      BuildCmd = [["chmod 755  &1"], ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"], [" fasm &1  &2", "chmod 755 &2"], ["chmod 755  &1"]]
+      CodeNames = ["Gambas Script", 
+            "C Source", 
+            "X86 Assembler", 
+            "Python 3", 
+            "Rust     "]
+      FileExtension = [".gbs", ".c", ".asm", "py", "rs"]
+      ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o"]
+      Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble"]
+      ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End"]
+      BuildCmd = [["chmod 755  &1"],
+            ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"], 
+            [" fasm &1  &2", "chmod 755 &2"], 
+            ["chmod 755  &1"],
+            ["touch &4/rustapp", "rm -r &4/rustapp", "cargo -Z unstable-options -C &4 new rustapp", 
+            "cargo -Z unstable-options  -C &4/rustapp add libc", 
+            "cargo -Z unstable-options  -C &4/rustapp add termion", 
+            "mv -f &1  &4/rustapp/src/main.rs", 
+            "cargo -Z unstable-options -C &4/rustapp build"]
+      ]
       
       Preamble[Gambas_code] = File.Load("gambas_preamble")
       ClosingCode[Gambas_Code] = File.Load("gambas_endcode")
@@ -36,6 +52,8 @@ Static Public Sub Myinit()
       ClosingCode[X86_asm_code] = File.Load("fasm_endcode")
       Preamble[Python3_code] = File.Load("python_preamble")
       ClosingCode[Python3_code] = File.Load("python_endcode")
+      Preamble[Rust_code] = File.Load("rust_preamble")
+      ClosingCode[Rust_code] = File.Load("rust_endcode")
       
 End
 
@@ -46,6 +64,9 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
       SourceFIle = Temp("gcode")
       BinaryFile = Temp("bfbinary")
       CAsmFile = Temp("casm")
+      BasePath = File.dir(SourceFile)
+      CompileType = genLanguage
+      
       Dim indent As Integer = 0
       
       NewSource = Preamble[genLanguage]
@@ -63,7 +84,7 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
       ' Select Case genLanguage
       '       Case C_code
       '             NewSource = C_Opt(NewSource)
-      '       Case 
+      '       
       ' End Select
       ' 
       NewSource &= ClosingCode[genLanguage]
@@ -74,9 +95,16 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
       File.Save(SourceFile, NewSource)
       
       Dim Makeit As String[] = BuildCmd[genLanguage]
+      
+      'Check if we are building the rust binary, it can take up to 5 minutes so spin off a special task
+      If CompileType = Rust_code Then
+            RustTerm = RunTask(MakeIt, "RustBatch", "Building Rust App, This can take up to 10 minutes, Very Slow Compiler!")
+            Return
+      Endif
+      
       For Each mitem As String In Makeit
-            Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle), " ", "\"", True, True)
-            TextInfo.BFOutput.Print("Building " & CodeNames[genLanguage] & "  : " & buildit.Join(" ") & "\n\r")
+            Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle, BasePath), " ", "\"", True, True)
+            TextInfo.BFOutput.Print("Building\t" & CodeNames[genLanguage] & "\t  : " & buildit.Join(" ") & "\n\r")
             If Not System.Exist(buildit[0]) Then
                   Message.Warning("Tools for building " & CodeNames[genLanguage] & " not found (" & buildit[0] & ")")
                   Break
@@ -90,7 +118,19 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
             Endif
       Next
       
-      CompileType = genLanguage
+End
+
+Private Sub RunTask(cmds As String[], name As String, title As String) As Process
+      
+      Dim cmdlist As New String[]
+      
+      For Each s As String In cmds
+            cmdlist.add(Subst(s, SourceFile, BinaryFile, CAsmFIle, BasePath))
+      Next
+      
+      Dim result As Process = RunBGBuild(cmdlist, name, title)
+      Wait 
+      Return result
       
 End
 
@@ -102,6 +142,18 @@ Public Sub Execute(Optional genLanguage As Integer = CompileType)
             Try TextInfo.BFOutput.Exec([SourceFile])
             If Error Then
                   Message.Warning("There Seems to be an Issue running Script: " & SourceFile & " : " & Error.text)
+            Endif
+      Else If genLanguage = Rust_code Then
+            If RustTerm And If RustTerm.state = Process.Stopped Then
+                  Dim execpath As String = basepath &/ "rustapp"
+                  Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run"]
+                  TextInfo.BFOutput.Print("Executing\t" & CodeNames[genLanguage] & "\t : " & Rustcmd.Join(" ") & "\n\r")
+                  Try TextInfo.BFOutput.Exec(Rustcmd, ["RUST_BACKTRACE=1"])
+                  If Error Then
+                        Message.Warning("There Seems to be an Issue running Script: " & SourceFile & " : " & Error.text)
+                  Endif
+            Else 
+                  Message.Warning("Rust is still compiling your program, please wait a little longer")
             Endif
       Else
             Try TextInfo.BFOutput.Exec([BinaryFile])
