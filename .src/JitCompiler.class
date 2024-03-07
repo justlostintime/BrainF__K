@@ -105,6 +105,8 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
       For Each mitem As String In Makeit
             Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle, BasePath), " ", "\"", True, True)
             TextInfo.BFOutput.Print("Building\t" & CodeNames[genLanguage] & "\t  : " & buildit.Join(" ") & "\n\r")
+            TextInfo.Refresh()
+            Wait 0.01
             If Not System.Exist(buildit[0]) Then
                   Message.Warning("Tools for building " & CodeNames[genLanguage] & " not found (" & buildit[0] & ")")
                   Break
@@ -137,7 +139,7 @@ End
 Static Public LastCommand As String = ""
 
 Public Sub Execute(Optional genLanguage As Integer = CompileType)
-
+      
       TextInfo.BFOutput.Clear()
       If genLanguage = Gambas_Code Or If genlanguage = Python3_code Then
             Try TextInfo.BFOutput.Exec([SourceFile])

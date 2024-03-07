@@ -1,4 +1,5 @@
 
 //****************************************************************
-  println!("\n\rEnd Binary execution RUST code source\n\r");
+  unsafe { putchar(10); putchar(13); };
+  println!("End Binary execution RUST code source\n\r");
 }

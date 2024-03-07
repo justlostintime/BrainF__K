@@ -1,3 +1,6 @@
+#[allow(dead_code)]
+#[allow(unused_assignments)]
+#[allow(unused_imports)]
 
 extern crate libc;
 use libc::{putchar,getchar};
@@ -5,8 +8,6 @@ use termion::raw::IntoRawMode;
 use std::io::{stdout};
 
 #[allow(dead_code)]
-#[allow(unused_assignments)]
-
 fn readchar() -> u8 {
   let ch = unsafe { getchar() };
   if  ch == 10 {
@@ -34,6 +35,5 @@ fn main() {
     // Print text to the console.
     println!("Begin Binary execution RUST code source");
     let _stdout = stdout().into_raw_mode();
-    
-//*****************************************************************************
 
+//*****************************************************************************

@@ -579,6 +579,7 @@ End
 Public Sub runGambas_Click()
       
       If $cpu And If $cpu.Jit_gambas_Binary And If $cpu.Jit_Gambas_Binary.NewSource <> "" Then
+            TextInfo.Activate()
             $cpu.Jit_Gambas_Binary.Execute()
       Endif
       
@@ -587,6 +588,7 @@ End
 Public Sub runCBin_Click()
       
       If $cpu And If $cpu.Jit_C_Binary And If $cpu.Jit_C_Binary.NewSource <> "" Then
+            TextInfo.Activate()
             $cpu.Jit_C_Binary.Execute()
       Endif
       
@@ -603,7 +605,17 @@ End
 Public Sub runPythonBin_Click()
       
       If $cpu And If $cpu.Jit_Python_Binary And If $cpu.Jit_Python_Binary.NewSource <> "" Then
+            
             $cpu.Jit_Python_Binary.Execute()
+      Endif
+      
+End
+
+Public Sub runRustBin_Click()
+      
+      If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
+            TextInfo.Activate()
+            $cpu.Jit_Rust_Binary.Execute()
       Endif
       
 End
@@ -631,13 +643,5 @@ Public Sub Comparetosource_Click()
             Inc cnt
       Next
       Message.Info("Source and program match")
-      
-End
-
-Public Sub runRustBin_Click()
-      
-      If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
-            $cpu.Jit_Rust_Binary.Execute()
-      Endif
       
 End
