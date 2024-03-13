@@ -661,3 +661,39 @@ Public Sub Comparetosource_Click()
       Message.Info("Source and program match")
       
 End
+
+Public Sub CopyGambas_Click()
+      
+      Clipboard.Copy($cpu.Jit_Gambas_Binary.NewSource, "text/plain")
+      
+End
+
+Public Sub CopyCBin_Click()
+      
+      Clipboard.Copy($cpu.Jit_C_Binary.NewSource, "text/plain")
+      
+End
+
+Public Sub CopyAsm_Click()
+      
+      Clipboard.Copy($cpu.Jit_Asm_Binary.NewSource, "text/plain")
+      
+End
+
+Public Sub CopyPythonBin_Click()
+      
+      Clipboard.Copy($cpu.Jit_Python_Binary.NewSource, "text/plain")
+      
+End
+
+Public Sub CopyRustBin_Click()
+      
+      Clipboard.Copy($cpu.Jit_Rust_Binary.NewSource, "text/plain")
+      
+End
+
+Public Sub CopyGoBin_Click()
+      
+      Clipboard.Copy($cpu.Jit_Golang_Binary.NewSource, "text/plain")
+      
+End
