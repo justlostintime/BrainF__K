@@ -259,6 +259,7 @@ Public Sub CompileMenu_Click()
             AsmListing.text = withLineNo($cpu.Jit_Asm_Binary.NewSource)
             PythonListing.text = withLineNo($cpu.Jit_python_binary.newsource)
             RustListing.Text = withLineNo($cpu.Jit_Rust_binary.newsource)
+            GolangListing.Text = withLineNo($cpu.Jit_Golang_binary.newsource)
             CAsmListing.text = File.Load($cpu.Jit_C_Binary.CAsmFIle)
             
       Endif
@@ -509,10 +510,15 @@ Public Sub Form_Resize()
       
       AsmListing.h = AllListings.H - 35 - asmpanel.h
       AsmListing.w = AllListings.w - 10
+      
       PythonListing.h = AllListings.H - 35 - Pythonpanel.h
       PythonListing.w = AllListings.w - 10
+      
       RustListing.h = AllListings.H - 35 - Rustpanel.h
       RustListing.w = AllListings.w - 10
+      
+      GolangListing.h = AllListings.H - 35 - Gopanel.h
+      GolangListing.w = AllListings.w - 10
       
       CAsmListing.h = AllListings.H - 35
       CAsmListing.w = AllListings.w - 10
@@ -597,6 +603,7 @@ End
 Public Sub runAsmBin_Click()
       
       If $cpu And If $cpu.Jit_asm_Binary And If $cpu.Jit_ASM_Binary.NewSource <> "" Then
+            TextInfo.Activate()
             $cpu.Jit_asm_Binary.Execute()
       Endif
       
@@ -605,7 +612,7 @@ End
 Public Sub runPythonBin_Click()
       
       If $cpu And If $cpu.Jit_Python_Binary And If $cpu.Jit_Python_Binary.NewSource <> "" Then
-            
+            TextInfo.Activate()
             $cpu.Jit_Python_Binary.Execute()
       Endif
       
@@ -616,6 +623,15 @@ Public Sub runRustBin_Click()
       If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
             TextInfo.Activate()
             $cpu.Jit_Rust_Binary.Execute()
+      Endif
+      
+End
+
+Public Sub runGoBin_Click()
+      
+      If $cpu And If $cpu.Jit_Golang_Binary And If $cpu.Jit_golang_Binary.NewSource <> "" Then
+            TextInfo.Activate()
+            $cpu.Jit_golang_Binary.Execute()
       Endif
       
 End

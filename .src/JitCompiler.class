@@ -5,6 +5,7 @@ Static Public C_code As Integer = 1
 Static Public X86_asm_code As Integer = 2
 Static Public Python3_code As Integer = 3
 Static Public Rust_code As Integer = 4
+Static Public Golang_code As Integer = 5
 
 Static Public CodeNames As String[]
 Static Public FileExtension As String[]
@@ -28,11 +29,12 @@ Static Public Sub Myinit()
             "C Source", 
             "X86 Assembler", 
             "Python 3", 
-            "Rust     "]
-      FileExtension = [".gbs", ".c", ".asm", "py", "rs"]
-      ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o"]
-      Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble"]
-      ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End"]
+            "Rust     ",
+            "Golang "]
+      FileExtension = [".gbs", ".c", ".asm", "py", "rs", "go"]
+      ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o", "ego"]
+      Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble", "Read Golang Preamble"]
+      ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End", "Read Golang End"]
       BuildCmd = [["chmod 755  &1"],
             ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"], 
             [" fasm &1  &2", "chmod 755 &2"], 
@@ -41,7 +43,8 @@ Static Public Sub Myinit()
             "cargo -Z unstable-options  -C &4/rustapp add libc", 
             "cargo -Z unstable-options  -C &4/rustapp add termion", 
             "mv -f &1  &4/rustapp/src/main.rs", 
-            "cargo -Z unstable-options -C &4/rustapp build"]
+            "cargo -Z unstable-options -C &4/rustapp build"],
+            ["gobuils construct"]
       ]
       
       Preamble[Gambas_code] = File.Load("gambas_preamble")
@@ -54,6 +57,8 @@ Static Public Sub Myinit()
       ClosingCode[Python3_code] = File.Load("python_endcode")
       Preamble[Rust_code] = File.Load("rust_preamble")
       ClosingCode[Rust_code] = File.Load("rust_endcode")
+      Preamble[Golang_code] = File.Load("golang_preamble")
+      ClosingCode[Golang_code] = File.Load("golang_endcode")
       
 End
 
@@ -102,9 +107,16 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
             Return
       Endif
       
+      If CompileType = Golang_code Then 
+            Makeit = [BasePath &/ "golang_build.sh  &1  &2  &3  &4"]
+            Dim aload As String = File.Load("golang_build.sh")
+            File.Save(BasePath &/ "golang_build.sh", aload)
+            Chmod BasePath &/ "golang_build.sh" To "rwxrwxrwx"
+      Endif
+      
       For Each mitem As String In Makeit
             Dim buildit As String[] = Split(Subst(mitem, SourceFile, BinaryFile, CAsmFIle, BasePath), " ", "\"", True, True)
-            TextInfo.BFOutput.Print("Building\t" & CodeNames[genLanguage] & "\t  : " & buildit.Join(" ") & "\n\r")
+            TextInfo.BFOutput.Print("Building :" & Left(CodeNames[genLanguage] & Space(15), 15) & "  : " & buildit.Join(" ") & "\n\r")
             TextInfo.Refresh()
             Wait 0.01
             If Not System.Exist(buildit[0]) Then
@@ -112,8 +124,10 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
                   Break
             Endif
             If buildit.count > 0 Then
-                  Exec buildit Wait
+                  Dim myoutput As String 
+                  Exec buildit To myoutput With Error
                   If Process.LastValue <> 0 Then
+                        TextInfo.BFOutput.Print("Building :" & Left(CodeNames[genLanguage] & Space(15), 15) & "  : " & Replace(myoutput, "\n", "\n\r") & "\n\r")
                         Message.Error("Build failed for :" & Quote(SourceFIle))
                         Break
                   Endif

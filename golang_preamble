@@ -1,0 +1,37 @@
+package main
+import (
+  "term"
+	"fmt"
+	"os"
+)
+
+func readchar() byte {
+
+oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+
+if err != nil {
+        panic(err)
+}
+var b []byte = make([]byte, 1)
+
+defer term.Restore(int(os.Stdin.Fd()), oldState)
+
+  os.Stdin.Read(b)
+  return b[0]
+}
+
+func writechar(val byte, count int) {
+  vchar := string(val)
+  for count > 0 {
+     fmt.Print(vchar)
+     count--
+     }
+}
+
+var storage[30000] byte               // bank of memory cells
+var dp int = 0                        // Current cell being referenced
+
+func main() {
+
+fmt.Println("Begin Binary execution Go code source")
+

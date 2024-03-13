@@ -23,6 +23,7 @@ Property Jit_C_Binary As JitCompiler Use $Jit_C_Binary
 Property Jit_asm_binary As JitCompiler Use $Jit_Asm_Binary
 Property Jit_python_binary As JitCompiler Use $Jit_Python_Binary
 Property Jit_rust_binary As JitCompiler Use $Jit_Rust_Binary
+Property Jit_golang_binary As JitCompiler Use $Jit_Golang_binary
 
 Const MoveLeft As Byte = 0                             ' Move the cell pointer to the left
 Const MoveRight As Byte = 1                           ' Move the cell point to the right
@@ -243,6 +244,7 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
       $jit_asm_Binary = New JitCompiler($jit_Pcode, 2)
       $jit_python_binary = New JitCompiler($jit_pcode, 3)
       $jit_rust_binary = New JitCompiler($jit_pcode, 4)
+      $jit_golang_binary = New JitCompiler($jit_pcode, 5)
       
 End
 

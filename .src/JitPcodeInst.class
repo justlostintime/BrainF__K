@@ -29,6 +29,14 @@ Public Languages As String[][] = [
       "writechar(storage[dp],&1);\n",
       "storage[dp] = readchar() ;\n",
       "storage[dp]=&1;\n"
+],
+      ["dp -= &1\n", "dp += &1\n",
+      "storage[dp] += &1\n",
+      "storage[dp] -= &1\n",
+      "for storage[dp] > 0 {\n", "}\n",
+      "writechar(storage[dp],&1)\n",
+      "storage[dp] = readchar()\n",
+      "storage[dp] = &1\n"
 ]
 ]
 Public LanguagesSingle As String[][] = [
@@ -56,6 +64,14 @@ Public LanguagesSingle As String[][] = [
       "writechar(storage[dp],&1);\n",
       "storage[dp] = readchar() ;\n",
       "storage[dp]=&1;\n"
+],
+      ["dp -= &1\n", "dp += &1\n",
+      "storage[dp] += &1\n",
+      "storage[dp] -= &1\n",
+      "for storage[dp] > 0 {\n", "}\n",
+      "writechar(storage[dp],&1)\n",
+      "storage[dp] = readchar()\n",
+      "storage[dp] = &1\n"
 ]
 ]
 
