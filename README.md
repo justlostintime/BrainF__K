@@ -1,5 +1,5 @@
 # BrainF__K
-This is a simple implemention of the Brain F__K interpreter
+This is a simple implementation of the Brain F__K interpreter
 it can be used to learn simple cpu/instruction execution. jits for c, asm, rust are also provided.
 
 #### Some examples from the following:
