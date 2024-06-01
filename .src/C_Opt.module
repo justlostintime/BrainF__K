@@ -11,20 +11,20 @@ Patterns As Collection = ["C1": ["\n[ ]* cmp byte[rdi], 0\n[ ]*jz lab.*\nlab.*:\
 ]
 
 Public Sub _call(source As String) As String
-      
-      TextInfo.BFOutput.Print("Optimizing " & JitCompiler.CodeNames[JitCompiler.C_code] & "\n\r")
-      Dim newSource As String = source
-      Dim changed As Boolean = True
-      While changed
-            changed = False
-            For Each Replacement As String[] In Patterns
-                  Dim oldSource As String = newSource
-                  newSource = RegExp.Replace(newSource, Replacement[0], Replacement[1])
-                  If oldSource <> newSource Then changed = True
-            Next
-            
-      Wend 
-      
-      Return newSource
-      
+
+    TextInfo.BFOutput.Print("Optimizing " & JitCompiler.CodeNames[JitCompiler.C_code] & "\n\r")
+    Dim newSource As String = source
+    Dim changed As Boolean = True
+    While changed
+        changed = False
+        For Each Replacement As String[] In Patterns
+            Dim oldSource As String = newSource
+            newSource = RegExp.Replace(newSource, Replacement[0], Replacement[1])
+            If oldSource <> newSource Then changed = True
+        Next
+
+    Wend
+
+    Return newSource
+
 End
