@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=Brain F__K
 Startup=FMain
-Version=1.2.5
+Version=1.2.6
 Component=gb.image
 Component=gb.gui
 Component=gb.form
@@ -26,7 +26,7 @@ Vendor=Westwood
 Address=justlostintime@gmail.com
 Url=https://github/justlostintime
 License=General Public License
-PackageName=brainf__k-1.2.2
+PackageName=brainf__k-1.2.6
 CreateEachDirectory=1
 Packager=1
 Systems=archlinux,autotools,debian,fedora,mageia,slackware,suse,ubuntu
