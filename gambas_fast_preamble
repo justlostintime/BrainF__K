@@ -1,0 +1,15 @@
+#!/usr/bin/env -S  gbs3 -T
+ Fast Unsafe
+ use "gb.term"
+ extern getchar() As Integer In "libc:6"
+ extern putchar(mychar as integer) As Integer In "libc:6"
+ Public Storage as new byte[1000000]
+ Public DP as integer = 0
+ Public Sub Main()
+    System.ignoreoverflow=true
+    Dim i as integer = 0
+    print "Begin Script execution Gambas source code"
+    dim t as variant = file.in.term.getattr()
+    t.icanon = false
+    file.in.term.setattr(1,t)
+'********************************************

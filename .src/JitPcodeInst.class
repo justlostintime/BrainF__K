@@ -5,73 +5,73 @@ Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode
 Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ    [ ", "BNZ   ] ", "Output .", "Input  ,", "Set"]
 
 Public Languages As String[][] = [
-      ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "while  Storage[dp] >  0\n",
-      "wend\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n", "Storage[dp]=&1\n"
+    ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "while  Storage[dp] >  0\n",
+    "wend\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n", "Storage[dp]=&1\n"
 ],
-      ["dp -= &1;\n", "dp += &1;\n", "*dp += &1;\n", "*dp -= &1;\n", "while(*dp>0){\n",
-      "}\n", "for (i=0;i<&1;i++) putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp = &1;\n"
+    ["dp -= &1;\n", "dp += &1;\n", "*dp += &1;\n", "*dp -= &1;\n", "while(*dp>0){\n",
+    "}\n", "for (i=0;i<&1;i++) putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp = &1;\n"
 ],
-      ["    sub rdi,&1\n", "    add rdi,&1\n", "    add byte [rdi],&1\n", "    sub byte [rdi],&1\n",
-      "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", 
-      "    mov ax,&1\n    call putchars\n", "    call getchar\n", "    mov byte[rdi],&1\n"],
-      ["dp -= &1\n", "dp += &1\n",                                                                                                               'define the python code generation
-      "storage[dp] = ((storage[dp]+&1)%256)\n",
-      "storage[dp] = storage[dp] - &1 if (storage[dp] - &1) >= 0 else (256 + (storage[dp] - &1))\n", 
-      "while storage[dp] > 0:\n", "\n",
-      "putchars(storage[dp],&1)\n",
-      "storage[dp] = getchar()\n", 
-      "storage[dp] = &1\n"
+    ["    sub rdi,&1\n", "    add rdi,&1\n", "    add byte [rdi],&1\n", "    sub byte [rdi],&1\n",
+    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n",
+    "    mov ax,&1\n    call putchars\n", "    call getchar\n", "    mov byte[rdi],&1\n"],
+    ["dp -= &1\n", "dp += &1\n",                                                                                                               'define the python code generation
+    "storage[dp] = ((storage[dp]+&1)%256)\n",
+    "storage[dp] = storage[dp] - &1 if (storage[dp] - &1) >= 0 else (256 + (storage[dp] - &1))\n",
+    "while storage[dp] > 0:\n", "\n",
+    "putchars(storage[dp],&1)\n",
+    "storage[dp] = getchar()\n",
+    "storage[dp] = &1\n"
 ],
-      ["dp -= &1;\n", "dp += &1;\n",
-      "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell 
-      "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-      "while storage[dp] > 0 {\n", "}\n",
-      "writechar(storage[dp],&1);\n",
-      "storage[dp] = readchar() ;\n",
-      "storage[dp]=&1;\n"
+    ["dp -= &1;\n", "dp += &1;\n",
+    "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell
+    "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
+    "while storage[dp] > 0 {\n", "}\n",
+    "writechar(storage[dp],&1);\n",
+    "storage[dp] = readchar() ;\n",
+    "storage[dp]=&1;\n"
 ],
-      ["dp -= &1\n", "dp += &1\n",
-      "storage[dp] += &1\n",
-      "storage[dp] -= &1\n",
-      "for storage[dp] > 0 {\n", "}\n",
-      "writechar(storage[dp],&1)\n",
-      "storage[dp] = readchar()\n",
-      "storage[dp] = &1\n"
+    ["dp -= &1\n", "dp += &1\n",
+    "storage[dp] += &1\n",
+    "storage[dp] -= &1\n",
+    "for storage[dp] > 0 {\n", "}\n",
+    "writechar(storage[dp],&1)\n",
+    "storage[dp] = readchar()\n",
+    "storage[dp] = &1\n"
 ]
 ]
 Public LanguagesSingle As String[][] = [
-      ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
-      "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n", "Storage[dp] = &1\n"
+    ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
+    "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n", "Storage[dp] = &1\n"
 ],
-      ["dp--;\n", "dp++;\n", "(*dp)++;\n", "(*dp)--;\n", "while (*dp >  0) {\n",
-      "}\n", "putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp=&1;\n"
+    ["dp--;\n", "dp++;\n", "(*dp)++;\n", "(*dp)--;\n", "while (*dp >  0) {\n",
+    "}\n", "putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp=&1;\n"
 ],
-      ["    dec rdi\n", "    inc rdi\n", "    inc byte [rdi]\n", "    dec byte [rdi]\n",
-      "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", "    call putchar\n", "    call getchar\n", "    mov byte[rdi],&1\n"
+    ["    dec rdi\n", "    inc rdi\n", "    inc byte [rdi]\n", "    dec byte [rdi]\n",
+    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", "    call putchar\n", "    call getchar\n", "    mov byte[rdi],&1\n"
 ],
-      ["dp -=  1\n", "dp += 1\n",
-      "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n",
-      "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n",
-      "while storage[dp] > 0:\n",
-      "\n", "print(chr(storage[dp]),end='')\n",
-      "storage[dp] = getchar()\n",
-      "storage[dp]=&1\n"
+    ["dp -=  1\n", "dp += 1\n",
+    "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n",
+    "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n",
+    "while storage[dp] > 0:\n",
+    "\n", "print(chr(storage[dp]),end='')\n",
+    "storage[dp] = getchar()\n",
+    "storage[dp]=&1\n"
 ],
-      ["dp -= 1;\n", "dp += 1;\n",
-      "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell 
-      "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-      "while storage[dp] > 0 {\n", "}\n",
-      "writechar(storage[dp],&1);\n",
-      "storage[dp] = readchar() ;\n",
-      "storage[dp]=&1;\n"
+    ["dp -= 1;\n", "dp += 1;\n",
+    "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell
+    "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
+    "while storage[dp] > 0 {\n", "}\n",
+    "writechar(storage[dp],&1);\n",
+    "storage[dp] = readchar() ;\n",
+    "storage[dp]=&1;\n"
 ],
-      ["dp -= &1\n", "dp += &1\n",
-      "storage[dp] += &1\n",
-      "storage[dp] -= &1\n",
-      "for storage[dp] > 0 {\n", "}\n",
-      "writechar(storage[dp],&1)\n",
-      "storage[dp] = readchar()\n",
-      "storage[dp] = &1\n"
+    ["dp -= &1\n", "dp += &1\n",
+    "storage[dp] += &1\n",
+    "storage[dp] -= &1\n",
+    "for storage[dp] > 0 {\n", "}\n",
+    "writechar(storage[dp],&1)\n",
+    "storage[dp] = readchar()\n",
+    "storage[dp] = &1\n"
 ]
 ]
 
@@ -81,29 +81,29 @@ Public JumpDest As Integer
 Public SourceLineNumber As Integer
 
 Public Sub _new(opcode As Byte, oper As Pointer, Optional Retpos As Integer = 0, lineno As Integer = 0)
-      
-      Instruction = opcode
-      Operand = oper
-      JumpDest = RetPos
-      SourceLineNumber = lineno
-      
+
+    Instruction = opcode
+    Operand = oper
+    JumpDest = RetPos
+    SourceLineNumber = lineno
+
 End
 
 Public Sub _print() As String
-      
-      Dim report As String = ""
-      
-      report = Subst("&1                  &2", ptext[Instruction], Format(CLong(Operand), "######0"))
-      Return report
-      
+
+    Dim report As String = ""
+
+    report = Subst("&1                  &2", ptext[Instruction], Format(CLong(Operand), "######0"))
+    Return report
+
 End
 
 Public Sub gencode(Optional genLanguage As Integer = 0) As String
-      
-      If Operand = 1 Then
-            Return Subst(LanguagesSingle[genLanguage][Instruction], CInt(Operand), JumpDest)
-      Else
-            Return Subst(Languages[genLanguage][Instruction], CInt(Operand), JumpDest)
-      Endif
-      
+
+    If Operand = 1 Then
+        Return Subst(LanguagesSingle[genLanguage][Instruction], CInt(Operand), JumpDest)
+    Else
+        Return Subst(Languages[genLanguage][Instruction], CInt(Operand), JumpDest)
+    Endif
+
 End

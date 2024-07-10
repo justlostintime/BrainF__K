@@ -19,6 +19,7 @@ Property Trace As Boolean Use $Trace
 Property Jit_Pcode As JitPcodeInst[] Use $Jit_Pcode
 
 Property Jit_Gambas_Binary As JitCompiler Use $Jit_Gambas_Binary
+Property Jit_Gambas_Fast_Binary As JitCompiler Use $Jit_Gambas_fast_Binary
 Property Jit_C_Binary As JitCompiler Use $Jit_C_Binary
 Property Jit_asm_binary As JitCompiler Use $Jit_Asm_Binary
 Property Jit_python_binary As JitCompiler Use $Jit_Python_Binary
@@ -245,6 +246,7 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
     $jit_python_binary = New JitCompiler($jit_pcode, 3)
     $jit_rust_binary = New JitCompiler($jit_pcode, 4)
     $jit_golang_binary = New JitCompiler($jit_pcode, 5)
+    $Jit_Gambas_fast_Binary = New JitCompiler($jit_pcode, 7, 0)
 
 End
 

@@ -3,58 +3,58 @@
 Property Name As String Use $name = "default"
 
 Public Sub Form_Close()
-      
-      write_settings()
-      
+
+    write_settings()
+
 End
 
 Public Sub Form_Open()
-      
-      Read_Settings()
-      
-      Me.Show()
-      
+
+    Read_Settings()
+
+    Me.Show()
+
 End
 
 Public Sub read_Settings()
-      
-      Me.top = Settings[$name &/ "OutputWindow/Top", Me.Top]
-      Me.Left = Settings[$name &/ "OutputWindow/Left", Me.Left]
-      Me.Height = Settings[$name &/ "OutputWindow/Height", Me.Height]
-      Me.Width = Settings[$name &/ "OutputWindow/Width", Me.Width]
-      
+
+    Me.top = Settings[$name &/ "OutputWindow/Top", Me.Top]
+    Me.Left = Settings[$name &/ "OutputWindow/Left", Me.Left]
+    Me.Height = Settings[$name &/ "OutputWindow/Height", Me.Height]
+    Me.Width = Settings[$name &/ "OutputWindow/Width", Me.Width]
+
 End
 
 Public Sub write_settings()
-      
-      Settings[$name &/ "OutputWindow/Top"] = Me.Top
-      Settings[$name &/ "OutputWindow/Left"] = Me.Left
-      Settings[$name &/ "OutputWindow/Height"] = Me.Height
-      Settings[$name &/ "OutputWindow/Width"] = Me.Width
-      
+
+    Settings[$name &/ "OutputWindow/Top"] = Me.Top
+    Settings[$name &/ "OutputWindow/Left"] = Me.Left
+    Settings[$name &/ "OutputWindow/Height"] = Me.Height
+    Settings[$name &/ "OutputWindow/Width"] = Me.Width
+
 End
 
 Public Sub Form_Resize()
-      
-      BFOutput.h = Me.H - BFOutput.Top - 4
-      BFOutput.w = Me.W - 4
-      
+
+    BFOutput.h = Me.H - BFOutput.Top - 4
+    BFOutput.w = Me.W - 4
+
 End
 
 Public Sub KillTask_Click()
-      
-      Me.BFOutput.Kill()
-      
+
+    Me.BFOutput.Kill()
+
 End
 
 Public Sub RefreshContent_Click()
-      
-      Me.BFOutput.Refresh()
-      
+
+    Me.BFOutput.Refresh()
+
 End
 
 Public Sub CopyText_Click()
-      
-      Me.BFOutput.Copy()
-      
+
+    Me.BFOutput.Copy()
+
 End

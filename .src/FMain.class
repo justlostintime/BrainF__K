@@ -18,682 +18,691 @@ Public FormCLosing As Boolean = False
 SourceCodeUpdated As Boolean = False
 
 Public Sub thetimer_Timer()
-      
-      Inc ticks
-      If $cpu Then
-            TextPC.text = $cpu.PC
-            TextPC.Refresh()
-            TextCell.text = $cpu.cell
-            TextCell.Refresh()
-            TotalInstructions.text = $cpu.InstCnt
-            TotalInstructions.Refresh()
-      Endif
-      
+
+    Inc ticks
+    If $cpu Then
+        TextPC.text = $cpu.PC
+        TextPC.Refresh()
+        TextCell.text = $cpu.cell
+        TextCell.Refresh()
+        TotalInstructions.text = $cpu.InstCnt
+        TotalInstructions.Refresh()
+    Endif
+
 End
 
 Property Title As String Use $title = "Brain Fuck Interpreter/Compiler  Gambas/C/x64asm"
 
 Public Sub Form_Open()
-      
-      System.IgnoreOverflow = True
-      Spinner1.Hide()
-      Me.MinH = 350
-      Me.minw = 900
-      
-      read_Settings()
-      MemoryDisplay.Show()
-      TextInfo.Show()
-      mytimer.Delay = 0.2
-      mytimer.Start()
-      Wait 0.0
-      
-      CompiledInst.Columns.count = 5
-      CompiledInst.Columns.width = $DisplayColumnWidth
-      CompiledInst.Rows.Count = 8
-      OldBG = CompiledInst[0, 0].Background
-      
-      JumpTable.Columns.count = 2
-      JumpTable.Columns.width = JumpTable.w \ 2
-      JumpTable.Rows.count = 10
-      
-      FMain.text = $title
-      FMain.Show()
-      Wait 0.0
-      JitCompiler.Myinit()
-      
+
+    System.IgnoreOverflow = True
+    Spinner1.Hide()
+    Me.MinH = 350
+    Me.minw = 900
+
+    read_Settings()
+    MemoryDisplay.Show()
+    TextInfo.Show()
+    mytimer.Delay = 0.2
+    mytimer.Start()
+    Wait 0.0
+
+    CompiledInst.Columns.count = 5
+    CompiledInst.Columns.width = $DisplayColumnWidth
+    CompiledInst.Rows.Count = 8
+    OldBG = CompiledInst[0, 0].Background
+
+    JumpTable.Columns.count = 2
+    JumpTable.Columns.width = JumpTable.w \ 2
+    JumpTable.Rows.count = 10
+
+    FMain.text = $title
+    FMain.Show()
+    Wait 0.0
+    JitCompiler.Myinit()
+
 End
 
 Public Sub Form_Close()
-      
-      formClosing = True
-      mytimer.Stop()
-      If $cpu Then
-            $cpu.Reset = True
-            $Cpu.Trace = False
-            $cpu.cpuTimer.Stop()
-            Wait 1.0
-            $cpu = Null
-      Endif
-      
-      MemoryDisplay.Close()
-      TextInfo.Close()
-      write_settings()
-      If SourceCodeUpdated Then
-            SaveBF_Click()
-      Endif
-      If RunBGBuild.OutputDisplay <> Null Then
-            RunBGBuild.OutputDisplay.Close()
-      Endif
-      
+
+    formClosing = True
+    mytimer.Stop()
+    If $cpu Then
+        $cpu.Reset = True
+        $Cpu.Trace = False
+        $cpu.cpuTimer.Stop()
+        Wait 1.0
+        $cpu = Null
+    Endif
+
+    MemoryDisplay.Close()
+    TextInfo.Close()
+    write_settings()
+    If SourceCodeUpdated Then
+        SaveBF_Click()
+    Endif
+    If RunBGBuild.OutputDisplay <> Null Then
+        RunBGBuild.OutputDisplay.Close()
+    Endif
+
 End
 
 Public Sub read_Settings()
-      
-      Me.top = Settings["window/top", Me.Top]
-      Me.Left = Settings["Window/Left", Me.Left]
-      Me.Height = Settings["Window/Height", Me.Height]
-      Me.Width = Settings["Window/Width", Me.Width]
-      
+
+    Me.top = Settings["window/top", Me.Top]
+    Me.Left = Settings["Window/Left", Me.Left]
+    Me.Height = Settings["Window/Height", Me.Height]
+    Me.Width = Settings["Window/Width", Me.Width]
+
 End
 
 Public Sub write_settings()
-      
-      Settings["Window/Top"] = Me.Top
-      Settings["Window/Left"] = Me.Left
-      Settings["Window/Height"] = Me.Height
-      Settings["Window/Width"] = Me.Width
-      
+
+    Settings["Window/Top"] = Me.Top
+    Settings["Window/Left"] = Me.Left
+    Settings["Window/Height"] = Me.Height
+    Settings["Window/Width"] = Me.Width
+
 End
 
 Public Sub SaveBF_Click()
-      
-      If $CurrentFile = "" Then
-            SaveAsBF_Click()
-            Return
-      Endif
-      SourceCode.Save($CurrentFile)
-      
+
+    If $CurrentFile = "" Then
+        SaveAsBF_Click()
+        Return
+    Endif
+    SourceCode.Save($CurrentFile)
+
 Catch
-      Message("Error Saving file " & $CurrentFile & " : " & Error.Text)
-      
+    Message("Error Saving file " & $CurrentFile & " : " & Error.Text)
+
 End
 
 Public Sub LoadProgram_Click()
-      
-      If $Cpu And If $Cpu.running Then
-            Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new program")
-            Return
-      Endif
-      Dialog.Filter = ["*.bf", "Brain F__K Files"]
-      If Dialog.OpenFile() Then Return
-      SourceCode.Load(Dialog.Path)
-      $CurrentFile = Dialog.Path
-      AllListings[0].Text = File.BaseName(Dialog.path)
-      
+
+    If $Cpu And If $Cpu.running Then
+        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new program")
+        Return
+    Endif
+    Dialog.Filter = ["*.bf", "Brain F__K Files"]
+    If Dialog.OpenFile() Then Return
+    SourceCode.Load(Dialog.Path)
+    $CurrentFile = Dialog.Path
+    AllListings[0].Text = File.BaseName(Dialog.path)
+
 Catch
-      Message("Error loading  file " & Dialog.Path & " : " & Error.text)
-      
+    Message("Error loading  file " & Dialog.Path & " : " & Error.text)
+
 End
 
 Public Sub SaveAsBF_Click()
-      
-      Dialog.Filter = ["*.bf", "Brain F__K Files"]
-      If Dialog.SaveFile() Then Return
-      SourceCode.Save(Dialog.path)
-      $CurrentFile = Dialog.Path
-      
+
+    Dialog.Filter = ["*.bf", "Brain F__K Files"]
+    If Dialog.SaveFile() Then Return
+    SourceCode.Save(Dialog.path)
+    $CurrentFile = Dialog.Path
+
 Catch
-      Message("Error Saving file " & Dialog.Path & " : " & Error.text)
-      
+    Message("Error Saving file " & Dialog.Path & " : " & Error.text)
+
 End
 
 Public Sub NewBF_Click()
-      
-      If $Cpu And If $Cpu.running Then
-            Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Starting a new program")
-            Return
-      Endif
-      
-      SourceCode.Clear()
-      $CurrentFile = ""
-      
-      If $cpu Then
-            $cpu.cpuTimer.Stop()
-            $cpu = Null
-      Endif
-      
-      AllListings[0].text = "New"
-      If $cpu And If $cpu.Jit_gambas_Binary Then $cpu.Jit_gambas_Binary.NewSource = ""
-      If $cpu And If $cpu.Jit_c_Binary Then $cpu.Jit_C_Binary.NewSource = ""
-      If $cpu And If $cpu.Jit_asm_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
-      If $cpu And If $cpu.Jit_python_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
-      
-      JitPcodeOut.Clear()
-      GambasListing.Clear()
-      CListing.Clear()
-      CAsmListing.Clear()
-      PythonListing.Clear()
-      AsmListing.Clear()
-      CompiledInst.Clear()
-      JumpTable.Clear()
-      
+
+    If $Cpu And If $Cpu.running Then
+        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Starting a new program")
+        Return
+    Endif
+
+    SourceCode.Clear()
+    $CurrentFile = ""
+
+    If $cpu Then
+        $cpu.cpuTimer.Stop()
+        $cpu = Null
+    Endif
+
+    AllListings[0].text = "New"
+    If $cpu And If $cpu.Jit_gambas_Binary Then $cpu.Jit_gambas_Binary.NewSource = ""
+    If $cpu And If $cpu.Jit_c_Binary Then $cpu.Jit_C_Binary.NewSource = ""
+    If $cpu And If $cpu.Jit_asm_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
+    If $cpu And If $cpu.Jit_python_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
+
+    JitPcodeOut.Clear()
+    GambasListing.Clear()
+    CListing.Clear()
+    CAsmListing.Clear()
+    PythonListing.Clear()
+    AsmListing.Clear()
+    CompiledInst.Clear()
+    JumpTable.Clear()
+
 End
 
 Public Sub QuitBF_Click()
-      
-      Me.Close()
-      
+
+    Me.Close()
+
 End
 
 Public Sub SetProgramDisplay()
-      
-      If Not $Cpu Or If Not $Cpu.Compiled Then Return
-      
-      Dim cols As Integer = CompiledInst.Columns.count
-      
-      CompiledInst.Rows.Count = ($cpu.Program.count + cols) \ cols
-      
-      Return
-      
-      For i As Integer = 0 To $Cpu.Program.Max
-            If i % 500 = 0 Then Wait 0
-            Dim row As Integer = i \ cols
-            Dim Col As Integer = i % cols
-            CompiledInst[row, col].text = $cpu.operators[$cpu.Program[i]]
-            Print $cpu.Program[i],
-                  If $cpu.Program[i] = 6 Then 
-                  Print CompiledInst[row, col].Background
-                  CompiledInst[row, col].Background = Color.Cyan
-            Else 
-                  CompiledInst[row, col].Background = Color.White
-            Endif
-      Next
-      
+
+    If Not $Cpu Or If Not $Cpu.Compiled Then Return
+
+    Dim cols As Integer = CompiledInst.Columns.count
+
+    CompiledInst.Rows.Count = ($cpu.Program.count + cols) \ cols
+
+    Return
+
+    For i As Integer = 0 To $Cpu.Program.Max
+        If i % 500 = 0 Then Wait 0
+        Dim row As Integer = i \ cols
+        Dim Col As Integer = i % cols
+        CompiledInst[row, col].text = $cpu.operators[$cpu.Program[i]]
+        Print $cpu.Program[i],
+            If $cpu.Program[i] = 6 Then
+            Print CompiledInst[row, col].Background
+            CompiledInst[row, col].Background = Color.Cyan
+        Else
+            CompiledInst[row, col].Background = Color.White
+        Endif
+    Next
+
 End
 
 Public Sub SetJumpDisplay()
-      
-      Dim i As Integer
-      
-      JumpTable.Columns[0].text = "["
-      JumpTable.Columns[1].text = "]"
-      JumpTable.Rows.count = $cpu.SysJumpStack.count
-      For i = 0 To $Cpu.SysJumpStack.Max
-            JumpTable[i, 0].Text = $cpu.SysJumpStack[i]
-            JumpTable[i, 1].Text = $cpu.SysReturnStack[i]
-      Next
-      
+
+    Dim i As Integer
+
+    JumpTable.Columns[0].text = "["
+    JumpTable.Columns[1].text = "]"
+    JumpTable.Rows.count = $cpu.SysJumpStack.count
+    For i = 0 To $Cpu.SysJumpStack.Max
+        JumpTable[i, 0].Text = $cpu.SysJumpStack[i]
+        JumpTable[i, 1].Text = $cpu.SysReturnStack[i]
+    Next
+
 End
 
 Sub withLineNo(source As String) As String
-      
-      Dim newsource As New String[]
-      Dim oldsource As String[] = Split(source, "\n", "\"", False, True) 
-      Dim linecount As Integer = 1
-      
-      For Each ss As String In oldsource
-            newsource.Add(Format(linecount, "#########0") & ":    " & ss)
-            Inc linecount
-      Next
-      Return newsource.Join("\n")
-      
+
+    Dim newsource As New String[]
+    Dim oldsource As String[] = Split(source, "\n", "\"", False, True)
+    Dim linecount As Integer = 1
+
+    For Each ss As String In oldsource
+        newsource.Add(Format(linecount, "#########0") & ":    " & ss)
+        Inc linecount
+    Next
+    Return newsource.Join("\n")
+
 End
 
 Public Sub CompileMenu_Click()
-      
-      If $Cpu And If $Cpu.running Then
-            Message.Error("The Program is currently runing you must stop/break, it before compiling/executing  a new program")
-            Return
-      Endif
-      Spinner1.Show()
-      Spinner1.Start()
-      $Cpu = New CPU(SourceCode.text, TextInfo.BFOutput) As "cputrace"
-      If $cpu.Compiled Then
-            SetJumpDisplay()
-            SetProgramDisplay()
-            setActiveEntry()
-            AllListings.Index = 1
-            JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
-            GambasListing.text = withLineNo($cpu.Jit_gambas_Binary.NewSource)
-            CListing.text = withLineNo($cpu.Jit_C_Binary.NewSource)
-            AsmListing.text = withLineNo($cpu.Jit_Asm_Binary.NewSource)
-            PythonListing.text = withLineNo($cpu.Jit_python_binary.newsource)
-            RustListing.Text = withLineNo($cpu.Jit_Rust_binary.newsource)
-            GolangListing.Text = withLineNo($cpu.Jit_Golang_binary.newsource)
-            CAsmListing.text = File.Load($cpu.Jit_C_Binary.CAsmFIle)
-            
-      Endif
-      Spinner1.Stop()
-      Spinner1.Hide()
-      
+
+    If $Cpu And If $Cpu.running Then
+        Message.Error("The Program is currently runing you must stop/break, it before compiling/executing  a new program")
+        Return
+    Endif
+    Spinner1.Show()
+    Spinner1.Start()
+    $Cpu = New CPU(SourceCode.text, TextInfo.BFOutput) As "cputrace"
+    If $cpu.Compiled Then
+        SetJumpDisplay()
+        SetProgramDisplay()
+        setActiveEntry()
+        AllListings.Index = 1
+        JitPcodeOut.text = JitPcode._Print($cpu.Jit_Pcode)
+        GambasListing.text = withLineNo($cpu.Jit_gambas_Binary.NewSource)
+        CListing.text = withLineNo($cpu.Jit_C_Binary.NewSource)
+        AsmListing.text = withLineNo($cpu.Jit_Asm_Binary.NewSource)
+        PythonListing.text = withLineNo($cpu.Jit_python_binary.newsource)
+        RustListing.Text = withLineNo($cpu.Jit_Rust_binary.newsource)
+        GolangListing.Text = withLineNo($cpu.Jit_Golang_binary.newsource)
+        CAsmListing.text = File.Load($cpu.Jit_C_Binary.CAsmFIle)
+
+    Endif
+    Spinner1.Stop()
+    Spinner1.Hide()
+
 End
 
 Public Sub cputrace_traceinfo()
-      
-      setActiveEntry()
-      
+
+    setActiveEntry()
+
 End
 
 Public Sub StepBF_Click()
-      
-      If $cpu And If $cpu.Compiled Then
-            $cpu.SingleStep = True
-            If Not $cpu.running Then
-                  RunningMsg.text = "Running"
-                  $cpu()
-                  setActiveEntry()
-            Endif
-      Endif
-      
-End
 
-Public Sub ResetMenu_Click()
-      
-      If $cpu And If $cpu.compiled Then
-            If $cpu.running Then
-                  $cpu.Reset = True
-            Else
-                  $Cpu.ResetMachine()
-                  setActiveEntry()
-            Endif
-      Endif
-      
-End
-
-Public Sub setActiveEntry()
-      
-      If FormClosing Then Return
-      
-      Dim Cols As Integer = CompiledInst.Columns.count
-      Dim row As Integer = $cpu.pc \ cols
-      Dim col As Integer = $cpu.pc % cols
-      
-      CompiledInst[OldSelectedRow, OldSelectedCol].Background = OldBG
-      oldBG = CompiledInst[Row, col].Background
-      CompiledInst[Row, col].Background = HighlightColor
-      If $cpu.program And If $cpu.Program.count > $cpu.pc Then
-            CompiledInst[Row, col].text = $cpu.operators[$cpu.Program[$cpu.PC]]
-      Endif
-      CompiledInst.Refresh()
-      OldSelectedCol = col
-      OldSelectedRow = row
-      TextPC.text = $cpu.PC
-      TextPC.Refresh()
-      TextCell.text = $cpu.cell
-      TextCell.Refresh()
-      TotalInstructions.text = $cpu.InstCnt
-      TotalInstructions.Refresh()
-      If $Cpu.running Then
-            RunningMsg.text = "Running"
-      Else
-            RunningMsg.text = "Halted"
-      Endif
-      MemoryDisplay.Write_data()
-      Wait 0
-      
-End
-
-Public Sub StopMenu_Click()
-      
-      If $cpu And If $cpu.compiled Then
-            $cpu.Break = True
-      Endif
-      
-End
-
-Public Sub RunBF_Click()
-      
-      If $cpu And If $cpu.Compiled And If $Cpu.Running = False Then
+    If $cpu And If $cpu.Compiled Then
+        $cpu.SingleStep = True
+        If Not $cpu.running Then
             RunningMsg.text = "Running"
             $cpu()
             setActiveEntry()
-      Endif
-      
+        Endif
+    Endif
+
+End
+
+Public Sub ResetMenu_Click()
+
+    If $cpu And If $cpu.compiled Then
+        If $cpu.running Then
+            $cpu.Reset = True
+        Else
+            $Cpu.ResetMachine()
+            setActiveEntry()
+        Endif
+    Endif
+
+End
+
+Public Sub setActiveEntry()
+
+    If FormClosing Then Return
+
+    Dim Cols As Integer = CompiledInst.Columns.count
+    Dim row As Integer = $cpu.pc \ cols
+    Dim col As Integer = $cpu.pc % cols
+
+    CompiledInst[OldSelectedRow, OldSelectedCol].Background = OldBG
+    oldBG = CompiledInst[Row, col].Background
+    CompiledInst[Row, col].Background = HighlightColor
+    If $cpu.program And If $cpu.Program.count > $cpu.pc Then
+        CompiledInst[Row, col].text = $cpu.operators[$cpu.Program[$cpu.PC]]
+    Endif
+    CompiledInst.Refresh()
+    OldSelectedCol = col
+    OldSelectedRow = row
+    TextPC.text = $cpu.PC
+    TextPC.Refresh()
+    TextCell.text = $cpu.cell
+    TextCell.Refresh()
+    TotalInstructions.text = $cpu.InstCnt
+    TotalInstructions.Refresh()
+    If $Cpu.running Then
+        RunningMsg.text = "Running"
+    Else
+        RunningMsg.text = "Halted"
+    Endif
+    MemoryDisplay.Write_data()
+    Wait 0
+
+End
+
+Public Sub StopMenu_Click()
+
+    If $cpu And If $cpu.compiled Then
+        $cpu.Break = True
+    Endif
+
+End
+
+Public Sub RunBF_Click()
+
+    If $cpu And If $cpu.Compiled And If $Cpu.Running = False Then
+        RunningMsg.text = "Running"
+        $cpu()
+        setActiveEntry()
+    Endif
+
 End
 
 Public Sub StopButton_Click()
-      
-      StopMenu_Click()
-      
+
+    StopMenu_Click()
+
 End
 
 Public Sub StepButton_Click()
-      
-      StepBF_Click()
-      
+
+    StepBF_Click()
+
 End
 
 Public Sub RunButton_Click()
-      
-      RunBF_Click()
-      
+
+    RunBF_Click()
+
 End
 
 Public Sub ResetButton_Click()
-      
-      ResetMenu_Click()
-      
+
+    ResetMenu_Click()
+
 End
 
 Public Sub CompileTool_Click()
-      
-      CompileMenu_Click()
-      
+
+    CompileMenu_Click()
+
 End
 
 Public Sub SingleStepTool_Click()
-      
-      StepBF_Click()
-      
+
+    StepBF_Click()
+
 End
 
 Public Sub StopTool_Click()
-      
-      StopMenu_Click
-      
+
+    StopMenu_Click
+
 End
 
 Public Sub ToolButton4_Click()
-      
-      RunBF_Click()
-      
+
+    RunBF_Click()
+
 End
 
 Public Sub ResetTool_Click()
-      
-      ResetMenu_Click()
-      
+
+    ResetMenu_Click()
+
 End
 
 Public Sub loadExample(sourceName As String)
-      
-      If $Cpu And If $Cpu.running Then
-            Message.Error("You must wait for running program to end\nor Break/Reset the program before\n loading an example")
-            Return
-      Endif
-      
-      NewBF_Click()
-      SourceCode.text = File.Load("Examples" &/ sourceName)
-      AllListings[0].text = File.BaseName(sourceName)
-      
-      CompileMenu_Click()
-      
+
+    If $Cpu And If $Cpu.running Then
+        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n loading an example")
+        Return
+    Endif
+
+    NewBF_Click()
+    SourceCode.text = File.Load("Examples" &/ sourceName)
+    AllListings[0].text = File.BaseName(sourceName)
+
+    CompileMenu_Click()
+
 End
 
 Public Sub bottlesMenu_Click()
-      
-      loadExample("99bottles.bf")
-      
+
+    loadExample("99bottles.bf")
+
 End
 
 Public Sub bsortex_Click()
-      
-      LoadExample("bsort.bf")
-      
+
+    LoadExample("bsort.bf")
+
 End
 
 Public Sub fibex_Click()
-      
-      LoadExample("fib.bf")
-      
+
+    LoadExample("fib.bf")
+
 End
 
 Public Sub hanoiex_Click()
-      
-      LoadExample("hanoi.bf")
-      
+
+    LoadExample("hanoi.bf")
+
 End
 
 Public Sub helloex_Click()
-      
-      LoadExample("hello_world.bf")
-      
+
+    LoadExample("hello_world.bf")
+
 End
 
 Public Sub lostkingdomex_Click()
-      
-      LoadExample("LostKingdom.bf")
-      
+
+    LoadExample("LostKingdom.bf")
+
 End
 
 Public Sub Mandelbrotex_Click()
-      
-      LoadExample("mandelbrot.bf")
-      
+
+    LoadExample("mandelbrot.bf")
+
 End
 
 Public Sub qsortex_Click()
-      
-      LoadExample("qsort.bf")
-      
+
+    LoadExample("qsort.bf")
+
 End
 
 Public Sub sierpinskiex_Click()
-      
-      LoadExample("sierpinski.bf")
-      
+
+    LoadExample("sierpinski.bf")
+
 End
 
 Public Sub TraceRadio_Click()
-      
-      If $cpu Then
-            $cpu.trace = True
-            '      Else
-            '            traceoffRadio.Value = True
-      Endif
-      
+
+    If $cpu Then
+        $cpu.trace = True
+        '      Else
+        '            traceoffRadio.Value = True
+    Endif
+
 End
 
 Public Sub traceoffRadio_Click()
-      
-      If $cpu Then
-            $cpu.trace = False
-      Endif
-      
+
+    If $cpu Then
+        $cpu.trace = False
+    Endif
+
 End
 
 Public Sub Form_Resize()
-      
-      AllListings.w = Me.w - 8
-      AllListings.h = (Me.h - 30) - AllListings.top
-      
-      SourceCode.h = AllListings.H - 35
-      SourceCode.w = AllListings.w - 10
-      
-      JitPcodeOut.h = AllListings.H - 35
-      JitPcodeOut.w = AllListings.w - 10
-      
-      GambasListing.h = AllListings.H - 35 - gambaspanel.h
-      GambasListing.w = AllListings.w - 10
-      CListing.h = AllListings.H - 35 - cpanel.h
-      CListing.w = AllListings.w - 10
-      
-      AsmListing.h = AllListings.H - 35 - asmpanel.h
-      AsmListing.w = AllListings.w - 10
-      
-      PythonListing.h = AllListings.H - 35 - Pythonpanel.h
-      PythonListing.w = AllListings.w - 10
-      
-      RustListing.h = AllListings.H - 35 - Rustpanel.h
-      RustListing.w = AllListings.w - 10
-      
-      GolangListing.h = AllListings.H - 35 - Gopanel.h
-      GolangListing.w = AllListings.w - 10
-      
-      CAsmListing.h = AllListings.H - 35
-      CAsmListing.w = AllListings.w - 10
-      
-      Buttons.top = AllListings.h - Buttons.h - 50
-      HaltTracePanel.top = AllListings.h - Buttons.h - 50
-      RegInfo.left = AllListings.w - RegInfo.w - 4
-      RegInfo.top = Buttons.top
-      
-      JumpTable.left = AllListings.w - JumpTable.w - 4
-      JumpTable.Height = (RegInfo.top - JumpTable.top - 4)
-      
-      CompiledInst.h = (Buttons.top - CompiledInst.Top - 4)
-      CompiledInst.w = (JumpTable.left - CompiledInst.left - 4)
-      
-      CompiledInst.Clear()
-      CompiledInst.Columns.count = (CompiledInst.w \ $DisplayColumnWidth) - 1
-      CompiledInst.Columns.width = $DisplayColumnWidth
-      Wait 0
-      SetProgramDisplay()
-      
+
+    AllListings.w = Me.w - 8
+    AllListings.h = (Me.h - 30) - AllListings.top
+
+    SourceCode.h = AllListings.H - 35
+    SourceCode.w = AllListings.w - 10
+
+    JitPcodeOut.h = AllListings.H - 35
+    JitPcodeOut.w = AllListings.w - 10
+
+    GambasListing.h = AllListings.H - 35 - gambaspanel.h
+    GambasListing.w = AllListings.w - 10
+    CListing.h = AllListings.H - 35 - cpanel.h
+    CListing.w = AllListings.w - 10
+
+    AsmListing.h = AllListings.H - 35 - asmpanel.h
+    AsmListing.w = AllListings.w - 10
+
+    PythonListing.h = AllListings.H - 35 - Pythonpanel.h
+    PythonListing.w = AllListings.w - 10
+
+    RustListing.h = AllListings.H - 35 - Rustpanel.h
+    RustListing.w = AllListings.w - 10
+
+    GolangListing.h = AllListings.H - 35 - Gopanel.h
+    GolangListing.w = AllListings.w - 10
+
+    CAsmListing.h = AllListings.H - 35
+    CAsmListing.w = AllListings.w - 10
+
+    Buttons.top = AllListings.h - Buttons.h - 50
+    HaltTracePanel.top = AllListings.h - Buttons.h - 50
+    RegInfo.left = AllListings.w - RegInfo.w - 4
+    RegInfo.top = Buttons.top
+
+    JumpTable.left = AllListings.w - JumpTable.w - 4
+    JumpTable.Height = (RegInfo.top - JumpTable.top - 4)
+
+    CompiledInst.h = (Buttons.top - CompiledInst.Top - 4)
+    CompiledInst.w = (JumpTable.left - CompiledInst.left - 4)
+
+    CompiledInst.Clear()
+    CompiledInst.Columns.count = (CompiledInst.w \ $DisplayColumnWidth) - 1
+    CompiledInst.Columns.width = $DisplayColumnWidth
+    Wait 0
+    SetProgramDisplay()
+
 End
 
 Public Sub CompiledInst_Data(Row As Integer, Column As Integer)
-      
-      If Not $Cpu Or If Not $Cpu.Compiled Then Return
-      Dim element As Integer = 0
-      
-      element = (row * CompiledInst.Columns.count) + column
-      If element > $cpu.Program.max Then Return
-      CompiledInst.Data.text = $cpu.operators[$cpu.Program[element]]
-      If $cpu.Program[element] = 6 Then
-            CompiledInst.Data.Background = Color.SoftGreen
-      Else 
-            CompiledInst.Data.Background = Color.white
-      Endif
-      
+
+    If Not $Cpu Or If Not $Cpu.Compiled Then Return
+    Dim element As Integer = 0
+
+    element = (row * CompiledInst.Columns.count) + column
+    If element > $cpu.Program.max Then Return
+    CompiledInst.Data.text = $cpu.operators[$cpu.Program[element]]
+    If $cpu.Program[element] = 6 Then
+        CompiledInst.Data.Background = Color.SoftGreen
+    Else
+        CompiledInst.Data.Background = Color.white
+    Endif
+
 End
 
 Public Sub TicTacToeMenu_Click()
-      
-      loadExample("TicTacToe.bf")
-      
+
+    loadExample("TicTacToe.bf")
+
 End
 
 Public Sub calpiex_Click()
-      
-      LoadExample("CalcPi.bf")
-      
+
+    LoadExample("CalcPi.bf")
+
 End
 
 Public Sub dbf2cex_Click()
-      
-      LoadExample("dbf2c.bf")
-      
+
+    LoadExample("dbf2c.bf")
+
 End
 
 Public Sub Calcex_Click()
-      
-      LoadExample("Calculator.bf")
-      
+
+    LoadExample("Calculator.bf")
+
 End
 
 Public Sub runGambas_Click()
-      
-      If $cpu And If $cpu.Jit_gambas_Binary And If $cpu.Jit_Gambas_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_Gambas_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_gambas_Binary And If $cpu.Jit_Gambas_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_Gambas_Binary.Execute()
+    Endif
+
+End
+
+Public Sub runGambasFast_Click()
+
+    If $cpu And If $cpu.Jit_gambas_fast_Binary And If $cpu.Jit_Gambas_fast_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_Gambas_Fast_Binary.Execute(0, "Running Gambas Jit, Be Patient")
+    Endif
+
 End
 
 Public Sub runCBin_Click()
-      
-      If $cpu And If $cpu.Jit_C_Binary And If $cpu.Jit_C_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_C_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_C_Binary And If $cpu.Jit_C_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_C_Binary.Execute()
+    Endif
+
 End
 
 Public Sub runAsmBin_Click()
-      
-      If $cpu And If $cpu.Jit_asm_Binary And If $cpu.Jit_ASM_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_asm_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_asm_Binary And If $cpu.Jit_ASM_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_asm_Binary.Execute()
+    Endif
+
 End
 
 Public Sub runPythonBin_Click()
-      
-      If $cpu And If $cpu.Jit_Python_Binary And If $cpu.Jit_Python_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_Python_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_Python_Binary And If $cpu.Jit_Python_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_Python_Binary.Execute()
+    Endif
+
 End
 
 Public Sub runRustBin_Click()
-      
-      If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_Rust_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_Rust_Binary And If $cpu.Jit_Rust_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_Rust_Binary.Execute()
+    Endif
+
 End
 
 Public Sub runGoBin_Click()
-      
-      If $cpu And If $cpu.Jit_Golang_Binary And If $cpu.Jit_golang_Binary.NewSource <> "" Then
-            TextInfo.Activate()
-            $cpu.Jit_golang_Binary.Execute()
-      Endif
-      
+
+    If $cpu And If $cpu.Jit_Golang_Binary And If $cpu.Jit_golang_Binary.NewSource <> "" Then
+        TextInfo.Activate()
+        $cpu.Jit_golang_Binary.Execute()
+    Endif
+
 End
 
 Public Sub Comparetosource_Click()
-      
-      Dim cnt As Long = 0
-      Dim a As String = Split(SourceCode.text, "\n", "\"", True, False).Join("")
-      Dim c As New Byte[]
-      
-      For i As Integer = 0 To a.Len - 1
-            Dim p As Integer = $cpu.operators.Find(a[i])
-            If p > -1 Then 
-                  c.Add(p)
-            Endif
-      Next
-      If c.count <> $Cpu.Program.count Then 
-            Message.Error("Program length does not match source length")
-      Endif
-      For Each b As Byte In $cpu.Program
-            If c[cnt] <> b Then 
-                  Message.Error("Source does not match program at " & CStr(cnt) & "{" & $cpu.operators[c[cnt]] & ":" & $cpu.operators[b] & "}")
-                  Return
-            Endif
-            Inc cnt
-      Next
-      Message.Info("Source and program match")
-      
+
+    Dim cnt As Long = 0
+    Dim a As String = Split(SourceCode.text, "\n", "\"", True, False).Join("")
+    Dim c As New Byte[]
+
+    For i As Integer = 0 To a.Len - 1
+        Dim p As Integer = $cpu.operators.Find(a[i])
+        If p > -1 Then
+            c.Add(p)
+        Endif
+    Next
+    If c.count <> $Cpu.Program.count Then
+        Message.Error("Program length does not match source length")
+    Endif
+    For Each b As Byte In $cpu.Program
+        If c[cnt] <> b Then
+            Message.Error("Source does not match program at " & CStr(cnt) & "{" & $cpu.operators[c[cnt]] & ":" & $cpu.operators[b] & "}")
+            Return
+        Endif
+        Inc cnt
+    Next
+    Message.Info("Source and program match")
+
 End
 
 Public Sub CopyGambas_Click()
-      
-      Clipboard.Copy($cpu.Jit_Gambas_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_Gambas_Binary.NewSource, "text/plain")
+
 End
 
 Public Sub CopyCBin_Click()
-      
-      Clipboard.Copy($cpu.Jit_C_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_C_Binary.NewSource, "text/plain")
+
 End
 
 Public Sub CopyAsm_Click()
-      
-      Clipboard.Copy($cpu.Jit_Asm_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_Asm_Binary.NewSource, "text/plain")
+
 End
 
 Public Sub CopyPythonBin_Click()
-      
-      Clipboard.Copy($cpu.Jit_Python_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_Python_Binary.NewSource, "text/plain")
+
 End
 
 Public Sub CopyRustBin_Click()
-      
-      Clipboard.Copy($cpu.Jit_Rust_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_Rust_Binary.NewSource, "text/plain")
+
 End
 
 Public Sub CopyGoBin_Click()
-      
-      Clipboard.Copy($cpu.Jit_Golang_Binary.NewSource, "text/plain")
-      
+
+    Clipboard.Copy($cpu.Jit_Golang_Binary.NewSource, "text/plain")
+
 End

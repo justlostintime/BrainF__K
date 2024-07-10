@@ -7,6 +7,7 @@ Static Public Python3_code As Integer = 3
 Static Public Rust_code As Integer = 4
 Static Public Golang_code As Integer = 5
 Static Public Arm_code As Integer = 6
+Static Public Gambas_Fast_Code As Integer = 7
 
 Static Public CodeNames As String[]
 Static Public FileExtension As String[]
@@ -32,12 +33,13 @@ Static Public Sub Myinit()
         "Python 3",
         "Rust     ",
         "Golang ",
-        "Arm Assembler"
+        "Arm Assembler",
+        "Gambas Fast Script"
     ]
-    FileExtension = [".gbs", ".c", ".asm", "py", "rs", "go", "S"]
-    ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o", "ego", "arm"]
-    Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble", "Read Golang Preamble", "Read Arm Preamble"]
-    ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End", "Read Golang End", "Read Arm End"]
+    FileExtension = [".gbs", ".c", ".asm", "py", "rs", "go", "S", ".gbsf"]
+    ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o", "ego", "arm", ".gbsf"]
+    Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble", "Read Golang Preamble", "Read Arm Preamble", "Gambas Fast PreAmble"]
+    ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End", "Read Golang End", "Read Arm End", "Gambas Fast End"]
     BuildCmd = [["chmod 755  &1"],
         ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"],
         [" fasm &1  &2", "chmod 755 &2"],
@@ -48,11 +50,15 @@ Static Public Sub Myinit()
         "mv -f &1  &4/rustapp/src/main.rs",
         "cargo -Z unstable-options -C &4/rustapp build"],
         ["gobuils construct"],
-        ["arm-none-eabi-as -mthumb &1 -o &2"]
+        ["arm-none-eabi-as -mthumb &1 -o &2"],
+        ["chmod 755 &1"]
     ]
 
     Preamble[Gambas_code] = File.Load("gambas_preamble")
+    Preamble[Gambas_fast_code] = File.Load("gambas_fast_preamble")
     ClosingCode[Gambas_Code] = File.Load("gambas_endcode")
+    ClosingCode[Gambas_fast_Code] = File.Load("gambas_endcode")
+
     Preamble[C_code] = File.Load("c_preamble")
     ClosingCode[C_code] = File.Load("c_endcode")
     Preamble[X86_asm_code] = File.Load("fasm_preamble")
@@ -68,7 +74,7 @@ Static Public Sub Myinit()
 
 End
 
-Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
+Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer, Optional Code_language As Integer = -1)
 
     Dim sline As String
 
@@ -76,7 +82,10 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
     BinaryFile = Temp("bfbinary")
     CAsmFile = Temp("casm")
     BasePath = File.dir(SourceFile)
-    CompileType = genLanguage
+    If Code_language = -1 Then
+        Code_language = genLanguage
+    Endif
+    CompileType = Code_language
 
     Dim indent As Integer = 0
 
@@ -84,7 +93,7 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer)
 
     For Each p As JitPcodeInst In mpcode
         If indent >= 4 And If p.Instruction = p.pcode_ifNotzero Then indent -= 4
-        Dim lines As String[] = Split(p.gencode(genLanguage), "\n", "\"", True, True)
+        Dim lines As String[] = Split(p.gencode(Code_language), "\n", "\"", True, True)
         For Each sline In lines
             NewSource &= Space(indent) & sline & "\n"
         Next
@@ -158,9 +167,12 @@ End
 
 Static Public LastCommand As String = ""
 
-Public Sub Execute(Optional genLanguage As Integer = CompileType)
+Public Sub Execute(Optional genLanguage As Integer = CompileType, Optional StartupMessage As String = "")
 
     TextInfo.BFOutput.Clear()
+    If StartupMessage <> "" Then
+        TextInfo.BFOutput.Print(StartupMessage & "\r")
+    Endif
     If genLanguage = Gambas_Code Or If genlanguage = Python3_code Then
         Try TextInfo.BFOutput.Exec([SourceFile])
         If Error Then

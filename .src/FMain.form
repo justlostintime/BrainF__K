@@ -205,13 +205,17 @@
     }
     { gambaspanel Panel
       MoveScaled(1,0,120,5)
-      { runGambas Button
-        MoveScaled(1,0,15,4)
-        Text = ("Execute")
+      { runGambasFast Button
+        MoveScaled(16,0,18,4)
+        Text = ("Execute Fast Unsafe")
       }
       { CopyGambas Button
-        MoveScaled(17,0,15,4)
+        MoveScaled(35,0,15,4)
         Text = ("Copy")
+      }
+      { runGambas Button
+        MoveScaled(0,0,15,4)
+        Text = ("Execute")
       }
     }
     Index = 4
