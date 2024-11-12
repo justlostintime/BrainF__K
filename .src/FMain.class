@@ -33,6 +33,21 @@ End
 
 Property Title As String Use $title = "Brain Fuck Interpreter/Compiler  Gambas/C/x64asm"
 
+Public Sub ProcessArgs()
+
+    Dim FileName As String = ""
+    Dim DisplayTimes As Boolean = False
+
+    Args.Begin("Usage brainf__k -p <program name>")
+    FileName = Args.Get("p", "program", "Program Name to load", "Program", "")
+    Args.end
+    If FileName <> "" Then
+        mLoadProgram(filename)
+        CompileMenu_Click()
+    Endif
+
+End
+
 Public Sub Form_Open()
 
     System.IgnoreOverflow = True
@@ -60,6 +75,8 @@ Public Sub Form_Open()
     FMain.Show()
     Wait 0.0
     JitCompiler.Myinit()
+
+    ProcessArgs()
 
 End
 
@@ -120,16 +137,27 @@ End
 
 Public Sub LoadProgram_Click()
 
+    mLoadProgram()
+
+End
+
+Public Sub mLoadProgram(Optional FileName As String = "")
+
     If $Cpu And If $Cpu.running Then
         Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new program")
         Return
     Endif
-    Dialog.Filter = ["*.bf", "Brain F__K Files"]
-    If Dialog.OpenFile() Then Return
-    SourceCode.Load(Dialog.Path)
-    $CurrentFile = Dialog.Path
-    AllListings[0].Text = File.BaseName(Dialog.path)
-
+    If FileName = "" Then
+        Dialog.Filter = ["*.bf", "Brain F__K Files"]
+        If Dialog.OpenFile() Then Return
+        SourceCode.Load(Dialog.Path)
+        $CurrentFile = Dialog.Path
+        AllListings[0].Text = File.BaseName(Dialog.path)
+    Else
+        $CurrentFile = FileName
+        SourceCode.Load(FileName)
+        AllListings[0].Text = File.BaseName(Dialog.path)
+    Endif
 Catch
     Message("Error loading  file " & Dialog.Path & " : " & Error.text)
 
