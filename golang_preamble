@@ -1,6 +1,6 @@
 package main
 import (
-  "term"
+  "golang.org/x/term"
 	"fmt"
 	"os"
 )
@@ -34,4 +34,3 @@ var dp int = 0                        // Current cell being referenced
 func main() {
 
 fmt.Println("Begin Binary execution Go code source")
-
