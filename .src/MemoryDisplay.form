@@ -2,7 +2,7 @@
 
 { Form Form
   MoveScaled(0,0,115,88)
-  Text = ("Brain F__K Cell Display")
+  Text = ("Cell Display")
   { !MemoryDisp GridView
     MoveScaled(2,1,111,79)
     #Public = True

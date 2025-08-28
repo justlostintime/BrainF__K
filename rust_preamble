@@ -19,6 +19,7 @@ fn readchar() -> Wrapping<u8> {
   return Wrapping(ch as u8);
 }
 
+#[allow(dead_code)]
 fn writechar(ch: Wrapping<u8>, count : u8) {
   let mut cnt = count;
   while cnt > 0 {
@@ -32,6 +33,7 @@ fn writechar(ch: Wrapping<u8>, count : u8) {
 fn main() {
     // Statements here are executed when the compiled binary is called.
     let mut storage = vec![Wrapping(0u8); 10000000].into_boxed_slice();  // define a meg of cells
+    #[allow(unused_mut)]
     let mut dp = 0;                                                // define the index into the cell array
     // Print text to the console.
     println!("Begin Binary execution RUST code source");

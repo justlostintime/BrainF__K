@@ -38,7 +38,8 @@ Static Public Sub Myinit()
     ]
     FileExtension = [".gbs", ".c", ".asm", "py", "rs", "go", "S", ".gbsf"]
     ObjExtension = [".gbs", ".cbn", ".run", "pyo", "o", "ego", "arm", ".gbsf"]
-    Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble", "Read Golang Preamble", "Read Arm Preamble", "Gambas Fast PreAmble"]
+    Preamble = ["Read File gambas", "Read File c", "Read Fasm Preamble", "Read Python3 Preamble", "Read Rust Preamble", "Read Golang Preamble",
+        "Read Arm Preamble", "Gambas Fast PreAmble"]
     ClosingCode = ["Read File gambas", "Read File c", "Read file asm", "Read Python 3 end", "Read Rust End", "Read Golang End", "Read Arm End", "Gambas Fast End"]
     BuildCmd = [["chmod 755  &1"],
         ["gcc -O3 -S -o &3 &1", "gcc  -O3 -o &2 &1"],
@@ -184,7 +185,12 @@ Public Sub Execute(Optional genLanguage As Integer = CompileType, Optional Start
     Else If genLanguage = Rust_code Then
         If RustTerm And If RustTerm.state = Process.Stopped Then
             Dim execpath As String = basepath &/ "rustapp"
-            Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run", "--release"]
+            Dim ScriptFile As String = basepath &/ "rustapp" &/ "runit.sh"
+            Dim RunScript As String = "#!/usr/bin/bash\necho Running Rust Execution Script\ncd " & basepath &/ "rustapp\ncargo run --release\n"
+            File.Save(ScriptFile, RunScript)
+            Chmod ScriptFile To "rwxrwxrwx"
+            'Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run", "--release"]
+            Dim RustCmd As String[] = [ScriptFile]
             TextInfo.BFOutput.Print("Executing\t" & CodeNames[genLanguage] & "\t : " & Rustcmd.Join(" ") & "\n\r")
             Try TextInfo.BFOutput.Exec(Rustcmd, ["RUST_BACKTRACE=1"])
             If Error Then

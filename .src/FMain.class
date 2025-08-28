@@ -31,7 +31,7 @@ Public Sub thetimer_Timer()
 
 End
 
-Property Title As String Use $title = "Brain Fuck Interpreter/Compiler  Gambas/C/x64asm"
+Property Title As String Use $title = "Brain Fuck Interpreter/Compiler : &1"
 
 Public Sub ProcessArgs()
 
@@ -71,7 +71,7 @@ Public Sub Form_Open()
     JumpTable.Columns.width = JumpTable.w \ 2
     JumpTable.Rows.count = 10
 
-    FMain.text = $title
+    FMain.text = Subst($title, "New Day!")
     FMain.Show()
     Wait 0.0
     JitCompiler.Myinit()

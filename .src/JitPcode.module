@@ -20,7 +20,7 @@ Public Sub _call(source As Byte[]) As JitPcodeInst[]
             Dim inst As Byte = source[Source_Pointer]
             Dim operand As Pointer = 0
             Select Case inst
-                Case .pcode_dec, .pcode_inc, .pcode_left, .pcode_right, .pcode_input, .pcode_output                               '"+", "-", ">", "<", ",", "."
+                Case .pcode_dec, .pcode_inc, .pcode_left, .pcode_right, .pcode_input, .pcode_output    '"+", "-", ">", "<", ",", "."
                     Operand = lex(source, ByRef Source_Pointer)
 
                 Case .pcode_ifzero                                                                   '  "["
