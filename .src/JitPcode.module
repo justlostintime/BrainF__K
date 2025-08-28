@@ -6,6 +6,8 @@ Private $ifZero As Integer[]
 Private $ifNotZero As Integer[]
 Private $stack As Integer[]
 
+'' Note that address values in optimized code refer to the source code
+'' not the optimized code address
 Public Sub _call(source As Byte[]) As JitPcodeInst[]
 
     Source_Pointer = 0
