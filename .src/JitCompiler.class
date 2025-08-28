@@ -51,7 +51,7 @@ Static Public Sub Myinit()
         "cd &4/rustapp",
         "cargo add libc",
         "cargo add termion",
-        "cargo build"],
+        "cargo build --release"],
         ["gobuils construct"],
         ["arm-none-eabi-as -mthumb &1 -o &2"],
         ["chmod 755 &1"]
@@ -184,7 +184,7 @@ Public Sub Execute(Optional genLanguage As Integer = CompileType, Optional Start
     Else If genLanguage = Rust_code Then
         If RustTerm And If RustTerm.state = Process.Stopped Then
             Dim execpath As String = basepath &/ "rustapp"
-            Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run"]
+            Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run", "--release"]
             TextInfo.BFOutput.Print("Executing\t" & CodeNames[genLanguage] & "\t : " & Rustcmd.Join(" ") & "\n\r")
             Try TextInfo.BFOutput.Exec(Rustcmd, ["RUST_BACKTRACE=1"])
             If Error Then

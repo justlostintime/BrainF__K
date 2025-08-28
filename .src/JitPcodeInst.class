@@ -23,12 +23,12 @@ Public Languages As String[][] = [
     "storage[dp] = &1\n"
 ],
     ["dp -= &1;\n", "dp += &1;\n",
-    "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell
-    "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-    "while storage[dp] > 0 {\n", "}\n",
+    "storage[dp] += Wrapping(&1);\n",            '  add a value to the cell
+    "storage[dp] -= Wrapping(&1);\n",            '  subtract value from total
+    "while storage[dp] > Wrapping(0) {\n", "}\n",
     "writechar(storage[dp],&1);\n",
     "storage[dp] = readchar() ;\n",
-    "storage[dp]=&1;\n"
+    "storage[dp]=Wrapping(&1);\n"
 ],
     ["dp -= &1\n", "dp += &1\n",
     "storage[dp] += &1\n",
@@ -39,6 +39,10 @@ Public Languages As String[][] = [
     "storage[dp] = &1\n"
 ]
 ]
+
+' "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                       '  add a value to the cell
+' "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
+
 Public LanguagesSingle As String[][] = [
     ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
     "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n", "Storage[dp] = &1\n"
@@ -58,12 +62,12 @@ Public LanguagesSingle As String[][] = [
     "storage[dp]=&1\n"
 ],
     ["dp -= 1;\n", "dp += 1;\n",
-    "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                                  '  add a value to the cell
-    "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-    "while storage[dp] > 0 {\n", "}\n",
+    "storage[dp]+=Wrapping(&1);\n",            '  add a value to the cell
+    "storage[dp]-=Wrapping(&1);\n",             '  subtract value from total
+    "while storage[dp].0 > 0 {\n", "}\n",
     "writechar(storage[dp],&1);\n",
     "storage[dp] = readchar() ;\n",
-    "storage[dp]=&1;\n"
+    "storage[dp] = Wrapping(&1);\n"
 ],
     ["dp -= &1\n", "dp += &1\n",
     "storage[dp] += &1\n",
@@ -74,7 +78,8 @@ Public LanguagesSingle As String[][] = [
     "storage[dp] = &1\n"
 ]
 ]
-
+' "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
+'"storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n"
 Public Instruction As Byte
 Public Operand As Pointer
 Public JumpDest As Integer

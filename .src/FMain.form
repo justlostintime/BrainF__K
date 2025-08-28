@@ -98,6 +98,7 @@
     { !SourceCode TextEditor
       MoveScaled(0,0,105,18)
       #Public = True
+      Background = Color.TextBackground
       Expand = True
       Highlight = "C"
       TabSize = 4
