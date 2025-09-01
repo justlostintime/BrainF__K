@@ -1,6 +1,6 @@
 ' Gambas class file
 
-Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode_ifzero = 4, pcode_ifNotZero = 5, pcode_input = 6, pcode_output = 7, pcode_set = 8
+Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode_ifzero = 4, pcode_ifNotZero = 5, pcode_output = 6, pcode_input = 7, pcode_set = 8
 
 Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ    [ ", "BNZ   ] ", "Output .", "Input  ,", "Set"]
 

@@ -201,7 +201,12 @@ End
 
 Public Sub ResetMachine()
 
-    $Cells = [0]
+    If FMain.$CellData.count > 0 Then
+        $Cells = FMain.$CellData.Copy()
+    Else
+        $Cells = [0]
+    Endif
+
     $Home = 0
     $pc = 0
     $SingleStep = False

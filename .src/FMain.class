@@ -14,6 +14,8 @@ Private OldBG As Integer = 0
 Public mytimer As New Timer As "thetimer"
 Public ticks As Long = 0
 Public FormCLosing As Boolean = False
+Public $CellData As New Byte[]
+Public $CellDataPath As String = ""
 
 SourceCodeUpdated As Boolean = False
 
@@ -65,7 +67,7 @@ Public Sub Form_Open()
     CompiledInst.Columns.count = 5
     CompiledInst.Columns.width = $DisplayColumnWidth
     CompiledInst.Rows.Count = 8
-    OldBG = CompiledInst[0, 0].Background
+    'OldBG = CompiledInst[0, 0].Background
 
     JumpTable.Columns.count = 2
     JumpTable.Columns.width = JumpTable.w \ 2
@@ -183,6 +185,8 @@ Public Sub NewBF_Click()
     Endif
 
     SourceCode.Clear()
+    $CellData.Clear()
+
     $CurrentFile = ""
 
     If $cpu Then
@@ -228,12 +232,18 @@ Public Sub SetProgramDisplay()
         Dim row As Integer = i \ cols
         Dim Col As Integer = i % cols
         CompiledInst[row, col].text = $cpu.operators[$cpu.Program[i]]
-        Print $cpu.Program[i],
-            If $cpu.Program[i] = 6 Then
-            Print CompiledInst[row, col].Background
-            CompiledInst[row, col].Background = Color.Cyan
+        'Print $cpu.Program[i],
+        If $cpu.Program[i] = JitPcodeInst.pcode_output Then
+            ' Print CompiledInst[row, col].Background
+            CompiledInst[row, col].Background = Color.green
+            CompiledInst[row, col].Foreground = Color.Invert(Color.green)
+        Else If $cpu.Program[i] = JitPcodeInst.pcode_input Then
+            ' Print CompiledInst[row, col].Background
+            CompiledInst[row, col].Background = Color.red
+            CompiledInst[row, col].Foreground = Color.Invert(Color.red)
         Else
-            CompiledInst[row, col].Background = Color.White
+            CompiledInst[row, col].Background = Color.background
+            CompiledInst[row, col].Foreground = Color.foreground
         Endif
     Next
 
@@ -373,6 +383,7 @@ Public Sub RunBF_Click()
 
     If $cpu And If $cpu.Compiled And If $Cpu.Running = False Then
         RunningMsg.text = "Running"
+        setActiveEntry()
         $cpu()
         setActiveEntry()
     Endif
@@ -451,6 +462,12 @@ End
 Public Sub bottlesMenu_Click()
 
     loadExample("99bottles.bf")
+
+End
+
+Public Sub GameOfLife_Click()
+
+    loadExample("GameOfLife.bf")
 
 End
 
@@ -578,10 +595,15 @@ Public Sub CompiledInst_Data(Row As Integer, Column As Integer)
     element = (row * CompiledInst.Columns.count) + column
     If element > $cpu.Program.max Then Return
     CompiledInst.Data.text = $cpu.operators[$cpu.Program[element]]
-    If $cpu.Program[element] = 6 Then
-        CompiledInst.Data.Background = Color.SoftGreen
+    If $cpu.Program[element] = JitPcodeInst.pcode_output Then
+        CompiledInst.Data.Background = Color.green
+        CompiledInst.Data.Foreground = Color.Invert(Color.green)
+    Else If $cpu.Program[element] = JitPcodeInst.pcode_input Then
+        CompiledInst.Data.Background = Color.red
+        CompiledInst.Data.Foreground = Color.Invert(Color.red)
     Else
-        CompiledInst.Data.Background = Color.white
+        CompiledInst.Data.Background = Color.background
+        CompiledInst.Data.Foreground = Color.foreground
     Endif
 
 End
@@ -732,5 +754,40 @@ End
 Public Sub CopyGoBin_Click()
 
     Clipboard.Copy($cpu.Jit_Golang_Binary.NewSource, "text/plain")
+
+End
+
+Public Sub LoadCellData_Click()
+
+    If $Cpu And If $Cpu.running Then
+        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new Cell Data")
+        Return
+    Endif
+
+    $CellDataPath = User.home &/ "Documents"
+    Dialog.Path = $CellDataPath
+    Dialog.Filter = ["*.cell", "Brain F__K Cell Files"]
+    If Dialog.OpenFile() Then
+        Return
+    Endif
+
+    Dim CellFile As File
+    CellFile = Open Dialog.Path
+    $CellData = New Byte[Lof(CellFile) + 1]
+    $CellData.Fill(0)
+
+    $CellData.Read(CellFile, 0, Lof(CellFile))
+    UseCellData.Caption = ("Using Loaded Cell Data : ") & Quote(Dialog.Path)
+
+Catch
+    Message("Error loading Cell Data " & Dialog.Path & " : " & Error.text)
+
+
+End
+
+Public Sub ClearCellData_Click()
+
+    $CellData = New Byte[]
+    UseCellData.Caption = ("Not Using Loaded Cell Data")
 
 End

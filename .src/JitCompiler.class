@@ -113,6 +113,10 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer, Optional Code_
     '
     NewSource &= ClosingCode[genLanguage]
 
+    If CompileType = Gambas_Code Or If CompileType = Gambas_Fast_Code Then    ' we need to break it up into functions
+        NewSource = Gambas_Opt(Split(NewSource, "\n", "\"", False, True)).Join("\n")
+    Endif
+
     SourceFile = File.setext(SourceFile, FileExtension[genLanguage])
     BinaryFile = File.SetExt(BinaryFile, ObjExtension[genLanguage])
 
@@ -189,7 +193,6 @@ Public Sub Execute(Optional genLanguage As Integer = CompileType, Optional Start
             Dim RunScript As String = "#!/usr/bin/bash\necho Running Rust Execution Script\ncd " & basepath &/ "rustapp\ncargo run --release\n"
             File.Save(ScriptFile, RunScript)
             Chmod ScriptFile To "rwxrwxrwx"
-            'Dim Rustcmd As String[] = ["cargo", "-Z", "unstable-options", "-C", basepath &/ "rustapp", "run", "--release"]
             Dim RustCmd As String[] = [ScriptFile]
             TextInfo.BFOutput.Print("Executing\t" & CodeNames[genLanguage] & "\t : " & Rustcmd.Join(" ") & "\n\r")
             Try TextInfo.BFOutput.Exec(Rustcmd, ["RUST_BACKTRACE=1"])

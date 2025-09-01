@@ -1,0 +1,101 @@
+' Gambas module file
+
+'' For Gambas, the single main may be too large to actually execte, limit 32k pcode words
+'' so in this case we will create a seperate function for every 5 nested level
+
+Const MaxWhileLevel As Integer = 5                                      ' if the depth equals 5 then make a new function
+Const FuncNames As String = "Public Sub &1() ' Primary Entry Point"     ' Mask used to generate function entry points
+Private FunctionIndex As Integer = 0                                    ' Value used to identify the current function
+Private ProgramLineCounter As Integer = 0                               ' the current line on the source being processed
+
+Private Program As String[]                                             ' the program we will process
+Private NewProgram As String[]                                          ' the new output program
+
+
+Public Sub _call(source As String[]) As String[]
+
+    NewProgram = New String[]
+    FunctionIndex = 0
+    ProgramLineCounter = 0
+
+    Program = source
+
+    ' read all the preamble lines up too the main function start
+    While ProgramLineCounter <= source.Max
+        Highlight.Analyze(Program[ProgramLineCounter])
+        If Highlight.IsFunction Then Break                     ' if it is a function here it must be main....
+        NewProgram.Add(Program[ProgramLineCounter])
+        Inc ProgramLineCounter
+    Wend
+
+    Inc ProgramLineCounter                                     ' bypass the func def
+    NewProgram.Insert(ProcessFunctionCall("main", "End"))
+
+    While ProgramLineCounter <= source.Max
+        NewProgram.Add(Program[ProgramLineCounter])
+        Inc ProgramLineCounter
+    Wend
+
+    Return NewProgram
+
+End
+
+Sub NewFuncName() As String
+
+    Inc FunctionIndex
+    Return Subst("gFunc&1", FunctionIndex)
+
+End
+
+
+Sub ProcessFunctionCall(Name As String, EndBlock As String) As String[]
+
+    Dim FuncDef As New String[]
+    Dim LastCount As Integer = -1
+
+    FuncDef.Add(Subst(FuncNames, Name))
+    FuncDef.Add("dim i as integer = 0")
+    Dim CurrentDepth As Integer = 0
+
+    While ProgramLineCounter <= Program.Max
+        If LastCount = ProgramLineCounter Then
+            Stop
+        Endif
+
+        If Trim(program[ProgramLineCounter]) = "" Then
+            FuncDef.Add("")
+            Inc ProgramLineCounter
+            Continue
+        Endif
+
+        Highlight.Analyze(Program[ProgramLineCounter])
+
+        If Highlight.Types[0] = Highlight.keyword And If Highlight.Symbols[0] == "while" Then
+            Inc CurrentDepth
+            If CurrentDepth = MaxWhileLevel Then
+                Dim NewFunc As String = NewFuncName()
+                FuncDef.Add(NewFunc & "()")
+                NewProgram.Insert(ProcessFunctionCall(NewFunc, "WEND"))
+                Dec CurrentDepth
+                Continue
+            Endif
+        Endif
+
+        FuncDef.Add(Program[ProgramLineCounter])
+        Inc ProgramLineCounter
+
+        If Highlight.Types[0] = Highlight.Keyword And If Highlight.Symbols[0] == EndBlock Then
+            Dec CurrentDepth
+            If CurrentDepth = 0 Then
+                If Upper(endblock) <> "END" Then
+                    FuncDef.Add("End")
+                Endif
+                Break
+            Endif
+        Endif
+
+    Wend
+
+    Return FuncDef
+
+End

@@ -17,7 +17,13 @@
       Text = ("Save As")
     }
     { LoadProgram Menu
-      Text = ("Load")
+      Text = ("Load Program")
+    }
+    { LoadCellData Menu
+      Text = ("Load Cell Data")
+    }
+    { ClearCellData Menu
+      Text = ("Clear Cell Data")
     }
     { QuitBF Menu
       Text = ("Quit")
@@ -53,6 +59,9 @@
     { bottlesMenu Menu
       Text = ("99 Bottles")
     }
+    { GameOfLife Menu
+      Text = ("Game Of Life")
+    }
     { bsortex Menu
       Text = ("bsort")
     }
@@ -87,6 +96,9 @@
       Text = ("Calculator")
     }
   }
+  { UseCellData Menu
+    Text = ("Not Using Loaded Cell Data")
+  }
   { !AllListings TabStrip
     MoveScaled(0,0,132,38)
     #Public = True
@@ -113,6 +125,7 @@
     { !CompiledInst GridView
       MoveScaled(1,0,101,25)
       #Public = True
+      Background = Color.Background
       Mode = Select.Single
     }
     { JumpTable GridView
