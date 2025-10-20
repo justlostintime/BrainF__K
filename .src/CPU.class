@@ -9,8 +9,8 @@ Property SingleStep As Boolean Use $SingleStep
 Property Home As Integer Use $home
 Property Compiled As Boolean Use $compiled
 Property break As Boolean Use $break
-Property reset As Boolean Use $Reset          ' reset the machine to initial state stop
-Property raw As Boolean Use $raw                  ' output the raw cell values as string
+Property reset As Boolean Use $Reset                 ' reset the machine to initial state stop
+Property raw As Boolean Use $raw                     ' output the raw cell values as string
 Property InputSource As Byte[] Use $InputSource
 Property inputbuffer As Byte[] Use $inputBuffer
 Property running As Boolean Use $running
@@ -54,148 +54,183 @@ Public Sub MyTimer_Timer()
 
 End
 
-'' this is the main entry point of the cpu function to start running the program
+'Breakpoints is maintained as a sorted array of addresses
 Public BreakPoints As Integer[] = [7200]
-Public EnableBreakpoints As Boolean = True
+Public EnableBreakpoints As Boolean = False
 Public ReturnAddress As Integer = 0
 
+'' This is the main entry point of the cpu function to start running the program
 Public Sub _call()
 
     Dim jumpto As Integer
+    Dim OutCounter As Integer
 
     Obtain_keypress()
+
     $running = True
+    OutCounter = 0
 
-    While True
-        Wait 0
-        Inc $InstCnt
+cpuloop:
+    'Print "Execute instruction loop inst"
+    'Wait 0
+    Inc $InstCnt
 
-        If $PC >= $Program.count Then
-            WriteDest.print("\n\rEnd of execution\n\r")
-            ResetMachine()
-            Break
+    If $PC >= $Program.count Then
+        WriteDest.print("\n\r" & ("End of execution") & "\n\r")
+        ResetMachine()
+        Goto cpubreak
+    Endif
+
+    'in development, not completed
+    If EnableBreakPoints And If $PC >= BreakPoints.first And $PC <= BreakPoints.last Then
+        If BreakPoints.ExistSorted($PC) Then
+            WriteDest.print("CPU Breakpoint encountered, Program Halted")
+            WriteDest.refresh()
+            Wait 0
+            Goto cpubreak
         Endif
+    Endif
 
-        If EnableBreakPoints And If $PC >= BreakPoints[0] Then
-            Stop
-        Endif
+    If $break Then
+        WriteDest.print(Subst("\n\r" & ("Break at") & "  &1 cell &2\n\r", $pc, $Cell))
+        $break = False
+        Goto cpubreak
+    Endif
 
-        If $break Then
-            WriteDest.print(Subst("\n\rBreak at  &1 cell &2\n\r", $pc, $Cell))
-            $break = False
-            Break
-        Endif
+    If $Reset Then
+        ResetMachine()
+        Goto cpubreak
+    Endif
 
-        If $Reset Then
-            ResetMachine()
-            Break
-        Endif
+    'Print "Execute gosub to instruction inst"
+    On $Program[$PC] Goto CellLeft, CellRight, CellAdd, CellSub, BRZ, BNZ, PRT, RDR
 
-        On $Program[$PC] GoSub CellLeft, CellRight, CellAdd, CellSub, BRZ, BNZ, PRT, RDR
-        Inc $PC
+cpureturn:
+    Inc $PC
 
-        If $SingleStep Then
-            $SingleStep = False
-            Break
-        Endif
+    'Print "Execute return from gosub inst"
+    If $SingleStep Then
+        $SingleStep = False
+        Goto cpubreak
+    Endif
 
-        If $trace Then
-            Raise Traceinfo()
-        Endif
+    If $trace Then
+        Raise Traceinfo()
+    Endif
 
-    Wend
+    Goto cpuloop
+
+cpubreak:
 
     $running = False
-    Release_keypress()
+    Goto ExitCpu
 
-    Return
 
 CellRight:
+    'Print "Execute cellright inst"
     Inc $cell
     If $Cell > $Cells.max Then     ' add a new cell if past end of cells
         $Cells.Push(0)
     Endif
-    Return
+    Goto cpureturn
 
 CellLeft:
+    'Print "Execute cellleft inst"
     Dec $cell
     If $Cell < 0 Then                         ' if to far to left then just add a new cell at the beginning
         Stop
         ' $Cells.add(0, 0)
         ' $Cell = 0
     Endif
-    Return
+    Goto cpureturn
 
 CellAdd:
+    'Print "Execute add inst"
     Inc $Cells[$Cell]
-    Return
+    'print "Execute return add inst"
+    Goto cpureturn
 
 CellSub:
+    'Print "Execute sub inst"
     Dec $Cells[$cell]
-    Return
+    Goto cpureturn
 
 BRZ:
+    'Print "Execute brz inst"
     If $Cells[$Cell] = 0 Then         ' jump forward to matching ] in the code
         jumpto = SysJumpStack.find($pc)
         If jumpto = -1 Then
-            WriteDest.print("\n\rError jump dest not found!! No Matching ]\n\r")
-            Stop
-            Return
+            WriteDest.print("\n\r" & ("Error jump dest not found!! No Matching") & " ]\n\r")
+            WriteDest.refresh()
+            Wait 0
+            $break = True
+            Goto cpureturn
         Else
             $pc = SysReturnStack[jumpto] - 1               ' cpu will inc right after this instruction
         Endif
     Endif
 
-    Return
+    Goto cpureturn
 
 BNZ:
-
+    'Print "Execute bnz inst"
     If $Cells[$Cell] <> 0 Then         ' Jump back to the matching [
 
         jumpto = SysReturnStack.find($pc)
         If jumpto = -1 Then
-            WriteDest.print("\n\rError jump dest not found!! No Matching [\n\r")
-            Stop
-            Return
+            WriteDest.print("\n\r" & ("Error jump dest not found!! No Matching") & " [\n\r")
+            WriteDest.refresh()
+            Wait 0
+            Goto cpureturn
         Else
             $pc = SysJumpStack[jumpto] - 1               ' cpu will inc right after this instruction
         Endif
     Endif
 
-    Return
+    Goto cpureturn
 
 PRT:
+    'Print "Execute PRT inst"
     Dim buffer As String = Chr$($Cells[$cell])
+
     If $raw Then
         If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
         WriteDest.print(buffer)
-        WriteDest.refresh()
-        Wait 0
-        Return
+        Inc OutCounter
+    Else
+        If IsPunct(buffer) Or If IsNumber(buffer) Or If IsLetter(buffer) Or If IsSpace(buffer) Then
+            If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
+            WriteDest.print(buffer)
+            Inc OutCounter
+        Else
+            WriteDest.print(" " & Hex$($Cells[$cell], 2))
+            outcounter += 2
+        Endif
     Endif
 
-    If IsPunct(buffer) Or If IsNumber(buffer) Or If IsLetter(buffer) Or If IsSpace(buffer) Then
-        If buffer = "\n" Or If buffer = "\r" Then buffer = "\n\r"
-        WriteDest.print(buffer)
+    If outcounter > 200 Or If buffer[0] = "\n" Or If buffer[0] = "\r" Then
         WriteDest.refresh()
-        Wait 0
-    Else
-        WriteDest.print(" " & Hex$($Cells[$cell], 2))
-        WriteDest.refresh()
-        Wait 0
+        Wait 0.001
+        OutCounter = 0
     Endif
-    Return
+    'Print "Completed Prt inst"
+    Goto cpureturn
 
 RDR:
+    'Print "Execute rdr inst"
     If $inputBuffer.count = 0 Then
         Wait 0
         Goto RDR
     Endif
     $Cells[$cell] = $inputBuffer.Pop()
-    Return
+    Goto cpureturn
 
 Exitcpu:
+    'Print "Execute exitcpu inst"
     Release_keypress()
+    WriteDest.Refresh()
+    Wait 0.001
+    Return
 
 End
 
@@ -238,11 +273,14 @@ Public Sub _new(source As String, writeto As Object, Optional readfrom As String
     Endif
 
     WriteDest = writeto
-    WriteDest.print("\e[2J\e[0mBrain F__K execution results\n\r")
+    WriteDest.print("\n\r\e[2J\e[0m" & ("Brain F__K execution results") & "\n\r")
+    WriteDest.refresh()
+    Wait 0
 
     $compiled = CompileProgram(Source)
 
     $jit_Pcode = JitPcode(compiledSource)
+
     $jit_Pcode = Optimizer($jit_Pcode)
 
     $jit_gambas_Binary = New JitCompiler($jit_Pcode, 0)
@@ -293,7 +331,7 @@ Public Sub CompileProgram(Source As String) As Boolean
                 returnStack.Push(-1)
             Case "]"    ' end or next in jump or loop
                 If returnStack.count = 0 Or If returnStack.last <> -1 Then
-                    CompileError(Subst("Unbalanced closing ] at &1\n\r", i), lineno, poschar)
+                    CompileError(Subst(("Unbalanced closing") & " ] @ &1\n\r", i), lineno, poschar)
                     valid = False
                 Else
                     returnStack.Pop()
@@ -314,7 +352,7 @@ Public Sub CompileProgram(Source As String) As Boolean
             Wait 0
         Endif
         If returnStack[i] = -1 Then
-            CompileError(Subst("Unbalanced Opening [  at  &1\n\r", jumpStack[i]), LineNo, PosChar)
+            CompileError(Subst(("Unbalanced Opening") & " [  @  &1\n\r", jumpStack[i]), LineNo, PosChar)
             valid = False
         Endif
     Next
@@ -331,7 +369,7 @@ End
 
 Sub CompileError(text As String, lineno As Integer, textpos As Integer)
 
-    WriteDest.print("Compile Error at &1:&2 " & text, lineno, textpos)
+    WriteDest.print(("Compile Error") & " @ &1:&2 " & text, lineno, textpos)
 
 End
 

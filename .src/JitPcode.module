@@ -2,18 +2,19 @@
 
 Private Source_Pointer As Integer = 0
 Private pcode As JitPcodeInst[]
-Private $ifZero As Integer[]
-Private $ifNotZero As Integer[]
+' Private $ifZero As Integer[]
+' Private $ifNotZero As Integer[]
 Private $stack As Integer[]
 
-'' Note that address values in optimized code refer to the source code
-'' not the optimized code address
+'' Note that address values in optimized code refers to the actual pcode line for label
 Public Sub _call(source As Byte[]) As JitPcodeInst[]
+
+    Dim op2 As Integer
 
     Source_Pointer = 0
     pcode = New JitPcodeInst[]
-    $ifZero = New Integer[]
-    $ifNotZero = New Integer[]
+    ' $ifZero = New Integer[]
+    ' $ifNotZero = New Integer[]
     $stack = New Integer[]
 
     With JitPcodeInst
@@ -26,40 +27,43 @@ Public Sub _call(source As Byte[]) As JitPcodeInst[]
                     Operand = lex(source, ByRef Source_Pointer)
 
                 Case .pcode_ifzero                                                                   '  "["
-                    Operand = 0
-                    $stack.Push(Pcode.count)
+                    Operand = -1
+                    op2 = -1
+                    '$stack.Push(Pcode.count)
                     Inc Source_Pointer
 
                 Case .pcode_ifNotZero                                                             '  "]"
-                    Operand = 0
-                    Dim return_addr As Integer = $stack.Pop()
-                    $ifZero.Add(return_addr, 0)
-                    $ifNotZero.Add(Pcode.count, 0)                            ' push these from the top down in end they should equal
+                    Operand = -1
+                    Op2 = -1
+                    '  Dim return_addr As Integer = $stack.Pop()
+                    ' $ifZero.Add(return_addr, 0)
+                    '$ifNotZero.Add(Pcode.count, 0)                            ' push these from the top down in end they should equal
                     Inc Source_Pointer
 
             End Select
 
-            Dim pinst As New JitPcodeInst(inst, Operand, 0, Source_Pointer)
+            Dim pinst As New JitPcodeInst(inst, Operand, op2, 0, Source_Pointer)
             pcode.Add(pinst)
 
         Wend
 
     End With
-    FixupJumps()
+    '  FixupJumps()
     Return Pcode
 
 End
 
-Sub FixupJumps()
-
-    For i As Integer = 0 To $IfZero.Max
-        pcode[$ifZero[i]].Operand = $ifNotZero[i]
-        pcode[$ifZero[i]].JumpDest = $ifZero[i]
-        pcode[$ifNotZero[i]].operand = $ifZero[i]
-        pcode[$ifNotZero[i]].JumpDest = $ifNotZero[i]
-    Next
-
-End
+' moved this function to the optimizer
+' Sub FixupJumps()
+'
+'     For i As Integer = 0 To $IfZero.Max
+'         pcode[$ifZero[i]].Operand = $ifNotZero[i]
+'         pcode[$ifZero[i]].JumpDest = $ifZero[i]
+'         pcode[$ifNotZero[i]].operand = $ifZero[i]
+'         pcode[$ifNotZero[i]].JumpDest = $ifNotZero[i]
+'     Next
+'
+' End
 
 Sub lex(Source As Byte[], ByRef ptr As Integer) As Pointer
 
@@ -83,7 +87,7 @@ Public Sub _print(Optional PcodePrg As JitPcodeInst[] = pcode) As String
     Dim report As String = ""
 
     report &= "Pcode Listing, Entries " & PcodePrg.count & "\n"
-    Report &= "Index        Instruction                        Operand\n"
+    Report &= "Index        Instruction                        Operand    Op2    JumpDest\n"
     Dim counter As Integer = 0
     For Each p As JitPcodeInst In PcodePrg
         report &= Format(counter, "####0") & "               " & p._print() & "\n"

@@ -1,0 +1,142 @@
+' Gambas module file
+
+Fast Unsafe
+'' This module will execute the actual pcode directly
+
+Private $InputBuffer As Byte[]
+
+Public Sub _call(pcode_binary As JitPcodeInst[])
+
+    Dim outcounter As Integer = 0
+
+    Dim programCounter As Integer = -1
+    Dim DataPointer As Integer = 0
+    Dim DataMemory As New Byte[100000]
+    Dim EndOfProgram As Integer = pcode_binary.Count
+
+    TextInfo.BFOutput.Clear()
+    TextInfo.BFOutput.Print("Executing BF PCODE\r")
+    Wait 0
+
+    $InputBuffer = New Byte[]
+    Obtain_keypress()
+
+cpuLoop:
+
+    Inc ProgramCounter
+    If programCounter >= EndOfProgram Then
+        release_keypress()
+        TextInfo.BFOutput.Print("Comleted BF PCODE execution\r")
+        TextInfo.BFOutput.refresh
+        Return
+    Endif
+    'Print "Execute next inst @ "; ProgramCounter
+    On pcode_binary[programCounter].Instruction Goto doleft, doright, doinc, dodec, DoIfZero, DoIfNotZero, DoOutput, DoInput, DoSetTo
+
+doLeft:
+    'Print "Execute < inst"
+    DataPointer -= pcode_binary[ProgramCounter].Operand
+    Goto cpuLoop
+
+doRight:
+    'Print "Execute > inst"
+    DataPointer += pcode_binary[ProgramCounter].Operand
+    Goto cpuLoop
+
+doInc:
+    Dim IncValue As Integer = pcode_binary[ProgramCounter].Operand
+    'Print "Execute inc inst";; IncValue
+    DataMemory[DataPointer] += IncValue
+    Goto cpuLoop
+
+doDec:
+
+    Dim DecValue As Integer = pcode_binary[ProgramCounter].Operand
+    'Print "Execute dec inst";; DecValue
+    DataMemory[DataPointer] -= DecValue
+    Goto cpuLoop
+
+DoIfZero:
+    'Print "Execute [ inst";; pcode_binary[ProgramCounter].Operand
+    If DataMemory[DataPointer] = 0 Then         ' jump forward to matching ] in the code
+        ProgramCounter = pcode_binary[ProgramCounter].Operand - 1
+    Endif
+
+    Goto cpuloop
+
+DoIfNotZero:
+    'Print "Execute ] inst";; pcode_binary[ProgramCounter].Operand
+    If DataMemory[DataPointer] <> 0 Then         ' jump backward to matching [ in the code
+        ProgramCounter = pcode_binary[ProgramCounter].Operand - 1
+    Endif
+
+    Goto cpuLoop
+
+DoInput:
+    'Print "Execute rdr inst"
+    Dim InCounter As Integer = pcode_binary[ProgramCounter].Operand
+    While InCounter > 0
+        If $inputBuffer.count = 0 Then
+            Wait 0
+            Continue
+        Endif
+        DataMemory[DataPointer] = $inputBuffer.Pop()
+        Dec InCounter
+        If inCounter > 0 Then
+            Inc DataPointer
+        Endif
+    Wend
+    Goto cpuloop
+
+DoOutput:
+    'Print "Execute PRT inst";;
+    Dim Writebuffer As String = Chr$(DataMemory[DataPointer])
+    If Writebuffer = "\n" Or If Writebuffer = "\r" Then Writebuffer = "\n\r"
+    Dim OutCount As Integer = pcode_binary[ProgramCounter].Operand
+    While outcount > 0
+        TextInfo.BFOutput.print(WriteBuffer)
+        Inc outcounter
+        Dec outcount
+    Wend
+
+    If outcounter > 200 Or If WriteBuffer[0] = "\n" Or If WriteBuffer[0] = "\r" Then
+        TextInfo.BFOutput.refresh()
+        Wait 0.001
+        outcounter = 0
+    Endif
+
+    Goto cpuloop
+
+DoSetTo:
+    'Print "Execute Set inst"
+    Dim SetValue As Integer = pcode_binary[ProgramCounter].Operand
+    DataMemory[DataPointer] = SetValue
+    Goto cpuloop
+
+End
+
+Public Sub release_keypress()
+
+    Object.Detach(TextInfo.BFOutput)
+
+End
+
+Public Sub Obtain_keypress()
+
+    Object.Attach(TextInfo.bfoutput, Me, "terminalToo")
+
+End
+
+Public Sub terminalToo_KeyRelease()
+
+    Print Asc(Key.text)
+    Dim val As Byte = Asc(Key.text)
+    TextInfo.BFOutput.print(Key.text)
+    If val = 13 Then
+        TextInfo.BFOutput.print("\n")
+        $inputbuffer.push(0)
+    Else
+        $inputbuffer.push(val)
+    Endif
+
+End

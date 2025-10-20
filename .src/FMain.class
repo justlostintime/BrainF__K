@@ -22,7 +22,7 @@ SourceCodeUpdated As Boolean = False
 Public Sub thetimer_Timer()
 
     Inc ticks
-    If $cpu Then
+    If $cpu And If $cpu.trace = True Then
         TextPC.text = $cpu.PC
         TextPC.Refresh()
         TextCell.text = $cpu.cell
@@ -33,15 +33,15 @@ Public Sub thetimer_Timer()
 
 End
 
-Property Title As String Use $title = "Brain Fuck Interpreter/Compiler : &1"
+Property Title As String Use $title = ("Brain F*ck Interpreter/Compiler") & " : &1"
 
 Public Sub ProcessArgs()
 
     Dim FileName As String = ""
     Dim DisplayTimes As Boolean = False
 
-    Args.Begin("Usage brainf__k -p <program name>")
-    FileName = Args.Get("p", "program", "Program Name to load", "Program", "")
+    Args.Begin(("Usage brainf__k -p <program name>"))
+    FileName = Args.Get("p", "program", ("Program Name to load"), "Program", "")
     Args.end
     If FileName <> "" Then
         mLoadProgram(filename)
@@ -73,7 +73,7 @@ Public Sub Form_Open()
     JumpTable.Columns.width = JumpTable.w \ 2
     JumpTable.Rows.count = 10
 
-    FMain.text = Subst($title, "New Day!")
+    FMain.text = Subst($title, ("New Day!"))
     FMain.Show()
     Wait 0.0
     JitCompiler.Myinit()
@@ -133,7 +133,7 @@ Public Sub SaveBF_Click()
     SourceCode.Save($CurrentFile)
 
 Catch
-    Message("Error Saving file " & $CurrentFile & " : " & Error.Text)
+    Message(("Error Saving file ") & $CurrentFile & " : " & Error.Text)
 
 End
 
@@ -146,11 +146,11 @@ End
 Public Sub mLoadProgram(Optional FileName As String = "")
 
     If $Cpu And If $Cpu.running Then
-        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new program")
+        Message.Error(("You must wait for running program to end\nor Break/Reset the program before\n Loading a new program"))
         Return
     Endif
     If FileName = "" Then
-        Dialog.Filter = ["*.bf", "Brain F__K Files"]
+        Dialog.Filter = ["*.bf", ("Brain F__K Files")]
         If Dialog.OpenFile() Then Return
         SourceCode.Load(Dialog.Path)
         $CurrentFile = Dialog.Path
@@ -161,26 +161,26 @@ Public Sub mLoadProgram(Optional FileName As String = "")
         AllListings[0].Text = File.BaseName(Dialog.path)
     Endif
 Catch
-    Message("Error loading  file " & Dialog.Path & " : " & Error.text)
+    Message(("Error loading  file ") & Dialog.Path & " : " & Error.text)
 
 End
 
 Public Sub SaveAsBF_Click()
 
-    Dialog.Filter = ["*.bf", "Brain F__K Files"]
+    Dialog.Filter = ["*.bf", ("Brain F__K Files")]
     If Dialog.SaveFile() Then Return
     SourceCode.Save(Dialog.path)
     $CurrentFile = Dialog.Path
 
 Catch
-    Message("Error Saving file " & Dialog.Path & " : " & Error.text)
+    Message(("Error Saving file ") & Dialog.Path & " : " & Error.text)
 
 End
 
 Public Sub NewBF_Click()
 
     If $Cpu And If $Cpu.running Then
-        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Starting a new program")
+        Message.Error(("You must wait for running program to end\nor Break/Reset the program before\n Starting a new program"))
         Return
     Endif
 
@@ -194,7 +194,7 @@ Public Sub NewBF_Click()
         $cpu = Null
     Endif
 
-    AllListings[0].text = "New"
+    AllListings[0].text = ("New")
     If $cpu And If $cpu.Jit_gambas_Binary Then $cpu.Jit_gambas_Binary.NewSource = ""
     If $cpu And If $cpu.Jit_c_Binary Then $cpu.Jit_C_Binary.NewSource = ""
     If $cpu And If $cpu.Jit_asm_Binary Then $cpu.Jit_Asm_Binary.NewSource = ""
@@ -280,7 +280,7 @@ End
 Public Sub CompileMenu_Click()
 
     If $Cpu And If $Cpu.running Then
-        Message.Error("The Program is currently runing you must stop/break, it before compiling/executing  a new program")
+        Message.Error(("The Program is currently runing you must stop/break, it before compiling/executing  a new program"))
         Return
     Endif
     Spinner1.Show()
@@ -317,7 +317,7 @@ Public Sub StepBF_Click()
     If $cpu And If $cpu.Compiled Then
         $cpu.SingleStep = True
         If Not $cpu.running Then
-            RunningMsg.text = "Running"
+            RunningMsg.text = ("Running")
             $cpu()
             setActiveEntry()
         Endif
@@ -362,9 +362,9 @@ Public Sub setActiveEntry()
     TotalInstructions.text = $cpu.InstCnt
     TotalInstructions.Refresh()
     If $Cpu.running Then
-        RunningMsg.text = "Running"
+        RunningMsg.text = ("Running")
     Else
-        RunningMsg.text = "Halted"
+        RunningMsg.text = ("Halted")
     Endif
     MemoryDisplay.Write_data()
     Wait 0
@@ -382,7 +382,10 @@ End
 Public Sub RunBF_Click()
 
     If $cpu And If $cpu.Compiled And If $Cpu.Running = False Then
-        RunningMsg.text = "Running"
+        RunningMsg.text = ("Running")
+        TextInfo.BFOutput.Clear()
+        TextInfo.BFOutput.Print("Begin Interpreter\r\n")
+        TextInfo.BFOutput.Refresh()
         setActiveEntry()
         $cpu()
         setActiveEntry()
@@ -447,7 +450,7 @@ End
 Public Sub loadExample(sourceName As String)
 
     If $Cpu And If $Cpu.running Then
-        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n loading an example")
+        Message.Error(("You must wait for running program to end\nor Break/Reset the program before\n loading an example"))
         Return
     Endif
 
@@ -575,6 +578,8 @@ Public Sub Form_Resize()
 
     JumpTable.left = AllListings.w - JumpTable.w - 4
     JumpTable.Height = (RegInfo.top - JumpTable.top - 4)
+    JumpTableHeading.width = JumpTable.Width
+    JumpTableHeading.left = JumpTable.left
 
     CompiledInst.h = (Buttons.top - CompiledInst.Top - 4)
     CompiledInst.w = (JumpTable.left - CompiledInst.left - 4)
@@ -645,7 +650,7 @@ Public Sub runGambasFast_Click()
 
     If $cpu And If $cpu.Jit_gambas_fast_Binary And If $cpu.Jit_Gambas_fast_Binary.NewSource <> "" Then
         TextInfo.Activate()
-        $cpu.Jit_Gambas_Fast_Binary.Execute(0, "Running Gambas Jit, Be Patient")
+        $cpu.Jit_Gambas_Fast_Binary.Execute(0, ("Running Gambas Jit compiler, Be Patient"))
     Endif
 
 End
@@ -708,16 +713,16 @@ Public Sub Comparetosource_Click()
         Endif
     Next
     If c.count <> $Cpu.Program.count Then
-        Message.Error("Program length does not match source length")
+        Message.Error(("Program length does not match source length"))
     Endif
     For Each b As Byte In $cpu.Program
         If c[cnt] <> b Then
-            Message.Error("Source does not match program at " & CStr(cnt) & "{" & $cpu.operators[c[cnt]] & ":" & $cpu.operators[b] & "}")
+            Message.Error(("Source does not match program at ") & CStr(cnt) & "{" & $cpu.operators[c[cnt]] & ":" & $cpu.operators[b] & "}")
             Return
         Endif
         Inc cnt
     Next
-    Message.Info("Source and program match")
+    Message.Info(("Source and program match"))
 
 End
 
@@ -760,13 +765,13 @@ End
 Public Sub LoadCellData_Click()
 
     If $Cpu And If $Cpu.running Then
-        Message.Error("You must wait for running program to end\nor Break/Reset the program before\n Loading a new Cell Data")
+        Message.Error(("You must wait for running program to end\nor Break/Reset the program before\n Loading any new Cell Data"))
         Return
     Endif
 
     $CellDataPath = User.home &/ "Documents"
     Dialog.Path = $CellDataPath
-    Dialog.Filter = ["*.cell", "Brain F__K Cell Files"]
+    Dialog.Filter = ["*.cell", ("Brain F__K Cell Files")]
     If Dialog.OpenFile() Then
         Return
     Endif
@@ -777,10 +782,10 @@ Public Sub LoadCellData_Click()
     $CellData.Fill(0)
 
     $CellData.Read(CellFile, 0, Lof(CellFile))
-    UseCellData.Caption = ("Using Loaded Cell Data : ") & Quote(Dialog.Path)
+    UseCellData.Caption = ("Interpreter - Using pre-loaded Cell Data : ") & Quote(Dialog.Path)
 
 Catch
-    Message("Error loading Cell Data " & Dialog.Path & " : " & Error.text)
+    Message(("Error pre-loading Cell Data ") & Dialog.Path & " : " & Error.text)
 
 
 End
@@ -788,6 +793,22 @@ End
 Public Sub ClearCellData_Click()
 
     $CellData = New Byte[]
-    UseCellData.Caption = ("Not Using Loaded Cell Data")
+    UseCellData.Caption = ("Interpreter - Not Using pre-loaded Cell Data")
+
+End
+
+
+Public Sub runPCode_Click()
+
+    If $cpu And If $cpu.Compiled And If $Cpu.Running = False Then
+        TextInfo.Activate()
+        PcodeCpu($Cpu.Jit_Pcode)
+    Endif
+
+End
+
+Public Sub CopyPcode_Click()
+
+    Clipboard.Copy(JitPcodeOut.text, "text/plain")
 
 End

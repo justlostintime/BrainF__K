@@ -104,7 +104,7 @@ Public Sub _New(mpcode As JitPcodeInst[], genLanguage As Integer, Optional Code_
         If p.Instruction = p.pcode_ifZero Then indent += 4
     Next
 
-    ' ' Optimize code if possible
+    ' ' Optimize code if possible - note new peephole optimizer used
     ' Select Case genLanguage
     '       Case C_code
     '             NewSource = C_Opt(NewSource)

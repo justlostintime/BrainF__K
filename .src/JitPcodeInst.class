@@ -80,15 +80,17 @@ Public LanguagesSingle As String[][] = [
 ]
 ' "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
 '"storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n"
-Public Instruction As Byte
-Public Operand As Pointer
+Public Instruction As Byte                          ' actual pcode instruction
+Public Operand As Pointer                           ' first operand
+Public Operand2 As Pointer                          ' second operand only used for jump sync
 Public JumpDest As Integer
-Public SourceLineNumber As Integer
+Public SourceLineNumber As Integer                  ' Source code line number, index
 
-Public Sub _new(opcode As Byte, oper As Pointer, Optional Retpos As Integer = 0, lineno As Integer = 0)
+Public Sub _new(opcode As Byte, oper As Pointer, Optional Oper2 As Pointer, Retpos As Integer = 0, lineno As Integer = 0)
 
     Instruction = opcode
     Operand = oper
+    Operand2 = oper2
     JumpDest = RetPos
     SourceLineNumber = lineno
 
@@ -98,7 +100,8 @@ Public Sub _print() As String
 
     Dim report As String = ""
 
-    report = Subst("&1                  &2", ptext[Instruction], Format(CLong(Operand), "######0"))
+    report = Subst("&1                  &2 &3 &4", ptext[Instruction], Format(CLong(Operand), "######0"), Format(CLong(Operand2), "######0"),
+        Format(CLong(JumpDest), "######0"))
     Return report
 
 End
@@ -106,9 +109,9 @@ End
 Public Sub gencode(Optional genLanguage As Integer = 0) As String
 
     If Operand = 1 Then
-        Return Subst(LanguagesSingle[genLanguage][Instruction], CInt(Operand), JumpDest)
+        Return Subst(LanguagesSingle[genLanguage][Instruction], CInt(Operand), CInt(Operand2))
     Else
-        Return Subst(Languages[genLanguage][Instruction], CInt(Operand), JumpDest)
+        Return Subst(Languages[genLanguage][Instruction], CInt(Operand), CInt(Operand2))
     Endif
 
 End

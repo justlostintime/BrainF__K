@@ -1,7 +1,7 @@
 # Gambas Form File 3.0
 
 { Form Form
-  MoveScaled(0,0,135,45)
+  MoveScaled(0,0,135,56)
   Expand = True
   Text = ("Brian F__K Source Code")
   AutoResize = True
@@ -97,10 +97,10 @@
     }
   }
   { UseCellData Menu
-    Text = ("Not Using Loaded Cell Data")
+    Text = ("Interpreter - Not Using pre-loaded Cell Data")
   }
   { !AllListings TabStrip
-    MoveScaled(0,0,132,38)
+    MoveScaled(0,0,132,46)
     #Public = True
     Expand = True
     AutoResize = True
@@ -129,7 +129,7 @@
       Mode = Select.Single
     }
     { JumpTable GridView
-      MoveScaled(103,0,23,25)
+      MoveScaled(103,4,23,21)
       Header = GridView.Horizontal
       ScrollBar = Scroll.Vertical
       Sorted = True
@@ -187,7 +187,7 @@
       }
     }
     { HaltTracePanel Panel
-      MoveScaled(56,26,23,7)
+      MoveScaled(56,26,23,13)
       { TraceRadio RadioButton
         MoveScaled(10,0,11,3)
         Text = ("Trace on")
@@ -204,11 +204,27 @@
         Alignment = Align.Center
       }
     }
+    { JumpTableHeading Label
+      MoveScaled(104,0,22,4)
+      Alignment = Align.Center
+      Text = ("Jump Table")
+    }
     Index = 2
     Text = ("JIT Pcode")
     { JitPcodeOut TextArea
-      MoveScaled(1,0,121,32)
+      MoveScaled(2,5,121,32)
       Font = Font["Ubuntu Mono"]
+    }
+    { cpanel2 Panel
+      MoveScaled(2,0,120,5)
+      { runPCode Button
+        MoveScaled(1,0,15,4)
+        Text = ("Execute")
+      }
+      { CopyPcode Button
+        MoveScaled(17,0,15,4)
+        Text = ("Copy")
+      }
     }
     Index = 3
     Text = ("Gambas Script")
@@ -334,7 +350,7 @@
     Index = 0
   }
   { !Spinner1 Spinner
-    MoveScaled(58,32,8,8)
+    MoveScaled(52,13,8,8)
     #Public = True
     Type = Spinner.Circle
   }

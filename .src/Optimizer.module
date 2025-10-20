@@ -2,13 +2,13 @@
 
 Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode_ifzero = 4, pcode_ifNotZero = 5, pcode_input = 6, pcode_output = 7, pcode_set = 8
 Public astext As String[] = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
-Public Opts As Collection = ["ClearCell-": "435",                               ' look for [-]
-    "ClearCell+": "425",                           ' look for [+]
-    "AddAndSet": "28",                           ' look for ++++[-]
-    "SubAndSet": "38",                          ' look for ---- [-]
-    "SetAndSet": "88",                            ' look for set value, set value
-    "SetAndInc": "82",                             ' look for set value then add  value
-    "SetAndDec": "83"                            ' look for set value then subtract value
+Public Opts As Collection = ["ClearCell-": "435",   ' look for [-]
+    "ClearCell+": "425",                            ' look for [+]
+    "AddAndSet": "28",                              ' look for ++++[-]
+    "SubAndSet": "38",                              ' look for ---- [-]
+    "SetAndSet": "88",                              ' look for set value, set value
+    "SetAndInc": "82",                              ' look for set value then add  value
+    "SetAndDec": "83"                               ' look for set value then subtract value
 ]
 
 Public Sub _call(Source As JitPcodeInst[]) As JitPcodeInst[]
@@ -23,9 +23,49 @@ Public Sub _call(Source As JitPcodeInst[]) As JitPcodeInst[]
         Endif
     Next
 
+    FixupJumps(ByRef newCode)
+
     Return newCode
 
 End
+
+Sub FixupJumps(ByRef source As JitPcodeInst[])
+
+    Dim index As Integer = 0
+
+    While True
+        If index > source.max Then Break
+        If source[index].Instruction = pcode_ifzero Then
+            index = DoBlock(ByRef source, index)
+        Endif
+        Inc Index
+    Wend
+
+End
+
+Sub DoBlock(ByRef source As JitPcodeInst[], index As Integer) As Integer
+
+    Dim thisBlock As Integer = index
+
+    Inc index
+    While True
+        If index > source.max Then
+            Error.raise(Subst(("Missing closing closing ] at &1"), ThisBlock))
+        Endif
+        If source[index].Instruction = pcode_ifzero Then
+            index = DoBlock(ByRef source, index)
+        Else If source[index].Instruction = pcode_ifNotZero Then
+            source[ThisBlock].Operand = index + 1
+            Source[ThisBlock].Operand2 = ThisBlock + 1
+            source[index].operand = ThisBlock + 1
+            Source[index].operand2 = index + 1
+            Return index
+        Endif
+        Inc index
+    Wend
+
+End
+
 
 Sub SpecialChecks(CodeList As JitPcodeInst[])
 
