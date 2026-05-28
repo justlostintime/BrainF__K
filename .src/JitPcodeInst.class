@@ -1,20 +1,45 @@
 ' Gambas class file
 
+'' Enumerate the pcode instruction value
 Public Enum pcode_inc = 2, pcode_dec = 3, pcode_left = 0, pcode_right = 1, pcode_ifzero = 4, pcode_ifNotZero = 5, pcode_output = 6, pcode_input = 7, pcode_set = 8
 
-Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ    [ ", "BNZ   ] ", "Output .", "Input  ,", "Set"]
+'' Enumerate the text representation of the pcode instruction
+Public ptext As String[] = ["Left  < ", "Right > ", "Inc   + ", "Dec   - ", "BZ    [ ", "BNZ   ] ", "Output .", "Input  ,", "Set   * "]
 
+'' define the generated source code definition for each language supported
+'' this table is used when value are greater than 1 or more than a single inc
 Public Languages As String[][] = [
-    ["DP -= &1\n", "DP += &1\n", "Storage[DP] += cbyte(&1)\n", "Storage[DP] -= cbyte(&1)\n", "while  Storage[dp] >  0\n",
-    "wend\n", "for i = 1 to &1\nputchar(storage[dp])\nnext\n", "Storage[dp]=readchar()\n", "Storage[dp]=&1\n"
+    ["DP -= &1\n",                      ' define gambas code generation set
+    "DP += &1\n",
+    "Storage[DP] += cbyte(&1)\n",
+    "Storage[DP] -= cbyte(&1)\n",
+    "while  Storage[dp] >  0\n",
+    "wend\n",
+    "for i = 1 to &1\nputchar(storage[dp])\nnext\n",
+    "Storage[dp]=readchar()\n",
+    "Storage[dp]=&1\n"
 ],
-    ["dp -= &1;\n", "dp += &1;\n", "*dp += &1;\n", "*dp -= &1;\n", "while(*dp>0){\n",
-    "}\n", "for (i=0;i<&1;i++) putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp = &1;\n"
+    ["dp -= &1;\n",                     ' define  c code generation set
+    "dp += &1;\n",
+    "*dp += &1;\n",
+    "*dp -= &1;\n",
+    "while(*dp>0){\n",
+    "}\n",
+    "for (i=0;i<&1;i++) putchar((int)*dp);\n",
+    "*dp = (unsigned char)readchar();\n",
+    "*dp = &1;\n"
 ],
-    ["    sub rdi,&1\n", "    add rdi,&1\n", "    add byte [rdi],&1\n", "    sub byte [rdi],&1\n",
-    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n",
-    "    mov ax,&1\n    call putchars\n", "    call getchar\n", "    mov byte[rdi],&1\n"],
-    ["dp -= &1\n", "dp += &1\n",                                                                                                               'define the python code generation
+    ["    sub rdi,&1\n",                ' define assembler code generation set
+    "    add rdi,&1\n",
+    "    add byte [rdi],&1\n",
+    "    sub byte [rdi],&1\n",
+    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n",
+    "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n",
+    "    mov ax,&1\n    call putchars\n",
+    "    call getchar\n",
+    "    mov byte[rdi],&1\n"
+],
+    ["dp -= &1\n", "dp += &1\n",           'define the python code generation
     "storage[dp] = ((storage[dp]+&1)%256)\n",
     "storage[dp] = storage[dp] - &1 if (storage[dp] - &1) >= 0 else (256 + (storage[dp] - &1))\n",
     "while storage[dp] > 0:\n", "\n",
@@ -22,7 +47,7 @@ Public Languages As String[][] = [
     "storage[dp] = getchar()\n",
     "storage[dp] = &1\n"
 ],
-    ["dp -= &1;\n", "dp += &1;\n",
+    ["dp -= &1;\n", "dp += &1;\n",          ' define rust code generation set
     "storage[dp] += Wrapping(&1);\n",            '  add a value to the cell
     "storage[dp] -= Wrapping(&1);\n",            '  subtract value from total
     "while storage[dp] > Wrapping(0) {\n", "}\n",
@@ -30,7 +55,7 @@ Public Languages As String[][] = [
     "storage[dp] = readchar() ;\n",
     "storage[dp]=Wrapping(&1);\n"
 ],
-    ["dp -= &1\n", "dp += &1\n",
+    ["dp -= &1\n", "dp += &1\n",            ' define go code generation set
     "storage[dp] += &1\n",
     "storage[dp] -= &1\n",
     "for storage[dp] > 0 {\n", "}\n",
@@ -40,20 +65,40 @@ Public Languages As String[][] = [
 ]
 ]
 
-' "storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n",                                                                                                       '  add a value to the cell
-' "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-
+'' define the generated source code definition for each language supported
+'' this table is used when value are  1 or a single inc
 Public LanguagesSingle As String[][] = [
-    ["dec  DP\n", "inc DP\n", "inc Storage[DP]\n", "Dec Storage[DP] \n", "while Storage[dp] > 0\n",
-    "wend\n", "putchar(storage[dp])\n", "Storage[dp]=readchar()\n", "Storage[dp] = &1\n"
+    ["dec  DP\n",                           'define gambas code generation
+    "inc DP\n",
+    "inc Storage[DP]\n",
+    "Dec Storage[DP] \n",
+    "while Storage[dp] > 0\n",
+    "wend\n",
+    "putchar(storage[dp])\n",
+    "Storage[dp]=readchar()\n",
+    "Storage[dp] = &1\n"
 ],
-    ["dp--;\n", "dp++;\n", "(*dp)++;\n", "(*dp)--;\n", "while (*dp >  0) {\n",
-    "}\n", "putchar((int)*dp);\n", "*dp = (unsigned char)readchar();\n", "*dp=&1;\n"
+    ["dp--;\n",                             ' define c code generation
+    "dp++;\n",
+    "(*dp)++;\n",
+    "(*dp)--;\n",
+    "while (*dp >  0) {\n",
+    "}\n",
+    "putchar((int)*dp);\n",
+    "*dp = (unsigned char)readchar();\n",
+    "*dp=&1;\n"
 ],
-    ["    dec rdi\n", "    inc rdi\n", "    inc byte [rdi]\n", "    dec byte [rdi]\n",
-    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n", "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n", "    call putchar\n", "    call getchar\n", "    mov byte[rdi],&1\n"
+    ["    dec rdi\n",                       ' define assembler code generation
+    "    inc rdi\n",
+    "    inc byte [rdi]\n",
+    "    dec byte [rdi]\n",
+    "    cmp byte [rdi],0\n     jz lab&1\nlab&2:\n",
+    "    cmp byte [rdi],0\n     jnz lab&1\nlab&2:\n",
+    "    call putchar\n",
+    "    call getchar\n",
+    "    mov byte[rdi],&1\n"
 ],
-    ["dp -=  1\n", "dp += 1\n",
+    ["dp -=  1\n", "dp += 1\n",             ' define Python code generation
     "storage[dp] = storage[dp] + 1 if  storage[dp] <  255  else  0\n",
     "storage[dp] = storage[dp] - 1 if  storage[dp]  > 0 else 255 \n",
     "while storage[dp] > 0:\n",
@@ -61,7 +106,7 @@ Public LanguagesSingle As String[][] = [
     "storage[dp] = getchar()\n",
     "storage[dp]=&1\n"
 ],
-    ["dp -= 1;\n", "dp += 1;\n",
+    ["dp -= 1;\n", "dp += 1;\n",            ' define rust code generation
     "storage[dp]+=Wrapping(&1);\n",            '  add a value to the cell
     "storage[dp]-=Wrapping(&1);\n",             '  subtract value from total
     "while storage[dp].0 > 0 {\n", "}\n",
@@ -69,7 +114,7 @@ Public LanguagesSingle As String[][] = [
     "storage[dp] = readchar() ;\n",
     "storage[dp] = Wrapping(&1);\n"
 ],
-    ["dp -= &1\n", "dp += &1\n",
+    ["dp -= &1\n", "dp += &1\n",            ' define go code generation
     "storage[dp] += &1\n",
     "storage[dp] -= &1\n",
     "for storage[dp] > 0 {\n", "}\n",
@@ -78,14 +123,14 @@ Public LanguagesSingle As String[][] = [
     "storage[dp] = &1\n"
 ]
 ]
-' "if storage[dp] as i16 - &1 >= 0 { storage[dp] -= &1;}else{storage[dp]= (256 + (storage[dp] as i16 - &1)) as u8;}\n",         '  subtract value from total
-'"storage[dp]=((storage[dp] as u16 + &1) % 256) as u8;\n"
+
 Public Instruction As Byte                          ' actual pcode instruction
 Public Operand As Pointer                           ' first operand
 Public Operand2 As Pointer                          ' second operand only used for jump sync
-Public JumpDest As Integer
+Public JumpDest As Integer                          ' obsolete code entry
 Public SourceLineNumber As Integer                  ' Source code line number, index
 
+'' initialize the current instruction information
 Public Sub _new(opcode As Byte, oper As Pointer, Optional Oper2 As Pointer, Retpos As Integer = 0, lineno As Integer = 0)
 
     Instruction = opcode
@@ -96,16 +141,20 @@ Public Sub _new(opcode As Byte, oper As Pointer, Optional Oper2 As Pointer, Retp
 
 End
 
+'' format the content of the current instruction
 Public Sub _print() As String
 
     Dim report As String = ""
 
-    report = Subst("&1                  &2 &3 &4", ptext[Instruction], Format(CLong(Operand), "######0"), Format(CLong(Operand2), "######0"),
-        Format(CLong(JumpDest), "######0"))
+    report = Subst("&1                  &2 &3 &4", ptext[Instruction],
+        Format(CLong(Operand), "-######0"),
+        IIf(Operand2 = -1, "        ", Format(CLong(Operand2), "-######0")),
+        IIf(Instruction = pcode_ifNotZero Or Instruction = pcode_ifzero, Format(CLong(operand), "-######0"), "         "))
     Return report
 
 End
 
+'' Generate the correct code for the current instruction
 Public Sub gencode(Optional genLanguage As Integer = 0) As String
 
     If Operand = 1 Then
